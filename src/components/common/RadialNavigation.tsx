@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
   Home, Users, Settings, LogOut,
-  BookOpen, FileText, CheckCircle, TrendingUp, Activity, Award, Bell, List
+  BookOpen, FileText, CheckCircle, TrendingUp, Activity, Award, Bell, List, HelpCircle
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -49,6 +49,7 @@ const RadialNavigation = () => {
       { to: '/admin', icon: Home, label: 'Dashboard' },
       { to: '/admin/courses', icon: BookOpen, label: 'Learning' },
       { to: '/admin/assignments', icon: FileText, label: 'Assignments' },
+      { to: '/admin/quizzes', icon: HelpCircle, label: 'Quizzes' },
       { to: '/admin/submissions', icon: CheckCircle, label: 'Submissions' },
       { to: '/admin/growth', icon: TrendingUp, label: 'Growth' },
       { to: '/admin/members', icon: Users, label: 'Members' },
@@ -68,6 +69,7 @@ const RadialNavigation = () => {
       { to: '/member', icon: Home, label: 'Dashboard' },
       { to: '/member/learning', icon: BookOpen, label: 'Learning' },
       { to: '/member/assignments', icon: FileText, label: 'Assignments' },
+      { to: '/member/quizzes', icon: HelpCircle, label: 'Quizzes' },
       { to: '/member/progress', icon: Activity, label: 'Progress' },
       { to: '/member/growth', icon: TrendingUp, label: 'Growth' },
       { to: '/member/skills', icon: Award, label: 'Skills' }
