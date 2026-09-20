@@ -39,7 +39,7 @@ export const CreateCourseForm = ({ onSubmit, onCancel }: Props) => {
     try {
       await onSubmit({
         ...data,
-        thumbnailUrl: undefined,
+        thumbnailUrl: '',
         createdBy: user?.id || 'unknown'
       });
     } catch (err: any) {

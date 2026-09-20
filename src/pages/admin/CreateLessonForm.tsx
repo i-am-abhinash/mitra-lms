@@ -36,10 +36,10 @@ export const CreateLessonForm = ({ courseId, moduleId, orderIndex, onSubmit, onC
       courseId,
       moduleId,
       order: orderIndex,
-      videoUrl: data.videoUrl || undefined,
+      videoUrl: data.videoUrl || '',
       // Store assignment info inside the lesson if provided
-      assignmentTitle: data.assignmentTitle || undefined,
-      assignmentDescription: data.assignmentDescription || undefined,
+      assignmentTitle: data.assignmentTitle || '',
+      assignmentDescription: data.assignmentDescription || '',
     } as any);
   };
 

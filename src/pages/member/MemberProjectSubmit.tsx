@@ -60,7 +60,7 @@ const MemberProjectSubmit = () => {
     const status: SubmissionStatus = isSubmit ? 'SUBMITTED' : 'DRAFT';
     
     try {
-      await saveProjectSubmission({
+      const payload: any = {
         projectId: selectedProjectId,
         memberId: user.id!,
         teamId: user.teamId!,
@@ -73,9 +73,13 @@ const MemberProjectSubmit = () => {
         improvements: formData.improvements,
         reflection: formData.reflection,
         status,
-        updatedAt: Timestamp.now(),
-        submittedAt: isSubmit ? Timestamp.now() : undefined
-      });
+        updatedAt: Timestamp.now()
+      };
+      if (isSubmit) {
+        payload.submittedAt = Timestamp.now();
+      }
+
+      await saveProjectSubmission(payload);
       await loadData();
       setSelectedProjectId(null);
     } catch (err) {
