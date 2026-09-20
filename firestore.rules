@@ -187,6 +187,30 @@ service cloud.firestore {
     }
 
     // =========================================================================
+    // GROWTH & SKILLS (Phase 5)
+    // =========================================================================
+
+    match /growth/{snapshotId} {
+      allow read: if isAuthenticated() && (
+        isAdmin() || 
+        (isLeader() && getTeamId() == resource.data.teamId) ||
+        request.auth.uid == resource.data.memberId
+      );
+      // Writes are generally systemic or Admin-driven for snapshots.
+      // FR-GROW-03: Growth is never manually editable by members/leaders.
+      allow write: if isAdmin();
+    }
+
+    match /skills/{skillId} {
+      allow read: if isAuthenticated() && (
+        isAdmin() || 
+        isLeader() || // simplifying: leaders can see skills
+        request.auth.uid == resource.data.memberId
+      );
+      allow write: if isAdmin() || (isAuthenticated() && isLeader());
+    }
+
+    // =========================================================================
     // DEFAULT DENY
     // =========================================================================
     match /{document=**} {

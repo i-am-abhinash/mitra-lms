@@ -32,8 +32,8 @@ const MemberDashboard = () => {
           icon={<BookOpen size={20} />} 
         />
         <MetricCard 
-          title='Assignment Performance' 
-          value={`${growth.assignmentPerformance}%`} 
+          title='Project Perf' 
+          value={`${growth.assignmentScores}%`} 
           icon={<CheckCircle size={20} />} 
         />
         <MetricCard 

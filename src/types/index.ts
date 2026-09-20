@@ -232,11 +232,32 @@ export interface Evaluation {
   evaluatedAt: Timestamp | Date;
 }
 
+export interface Skill {
+  id?: string;
+  memberId: string;
+  name: string;
+  level: number; // 1-5
+  evidenceRefs: string[]; // submissionIds or taskIds
+  updatedAt: Timestamp | Date;
+}
+
+export interface GrowthSnapshot {
+  id?: string;
+  memberId: string;
+  teamId: string;
+  period: string; // e.g. "2026-09"
+  metrics: Record<string, number>;
+  sourceRefs: string[];
+  calculatedAt: Timestamp | Date;
+}
+
 export interface GrowthMetrics {
   userId: string;
-  overallGrowth: number; // 0-100
-  courseCompletion: number; // 0-100
-  assignmentPerformance: number; // 0-100
+  overallGrowth: number; // 0-100 derived from evidence
+  courseCompletion: number;
+  assignmentScores: number;
+  participationRate: number;
+  evidenceRefs: string[]; // required by FR-GROW-01
   attendanceConsistency: number; // 0-100
   skills: Record<string, number>; // e.g., { 'Python': 80, 'Machine Learning': 60 }
   lastUpdated: Timestamp | Date;
