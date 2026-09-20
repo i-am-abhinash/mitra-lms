@@ -1,11 +1,10 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { UserRole } from '../../types';
 
 interface RouteGuardProps {
   children: React.ReactNode;
-  allowedRoles: UserRole[];
+  allowedRoles: ('Admin' | 'Team Leader' | 'Member')[];
 }
 
 export const RouteGuard = ({ children, allowedRoles }: RouteGuardProps) => {
