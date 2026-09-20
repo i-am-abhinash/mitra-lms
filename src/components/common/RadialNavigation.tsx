@@ -149,18 +149,17 @@ const RadialNavigation = () => {
           >
             <svg width='100%' height='100%' className='absolute inset-0'>
               <path d={d} fill='none' stroke='rgba(109, 124, 255, 0.15)' strokeWidth='1' strokeDasharray='4 4' />
+              {allItems.map((item, index) => {
+                const angle = getAngle(index, totalItems);
+                const cx = svgCenter + arcRadius * Math.cos(angle); 
+                const cy = svgCenter + arcRadius * Math.sin(angle);
+                const isActive = location.pathname === item.to || (location.pathname.startsWith(item.to) && !['/admin','/leader','/member'].includes(item.to));
+                
+                return (
+                  <circle key={`dot-${index}`} cx={cx} cy={cy} r={isActive ? '4' : '2'} fill={isActive ? '#6D7CFF' : 'rgba(109, 124, 255, 0.3)'} className='transition-all duration-300' />
+                );
+              })}
             </svg>
-
-            {allItems.map((item, index) => {
-              const angle = getAngle(index, totalItems);
-              const cx = svgCenter + arcRadius * Math.cos(angle); 
-              const cy = svgCenter + arcRadius * Math.sin(angle);
-              const isActive = location.pathname === item.to || (location.pathname.startsWith(item.to) && !['/admin','/leader','/member'].includes(item.to));
-              
-              return (
-                <circle key={`dot-${index}`} cx={cx} cy={cy} r={isActive ? '4' : '2'} fill={isActive ? '#6D7CFF' : 'rgba(109, 124, 255, 0.3)'} className='transition-all duration-300' />
-              );
-            })}
           </div>
 
           {allItems.map((item, index) => {
