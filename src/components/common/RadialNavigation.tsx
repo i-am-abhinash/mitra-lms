@@ -47,10 +47,11 @@ const RadialNavigation = () => {
   if (isAdmin) {
     navItems = [
       { to: '/admin', icon: Home, label: 'Dashboard' },
-      { to: '/admin/courses', icon: BookOpen, label: 'Learning' },
+      { to: '/admin/courses', icon: BookOpen, label: 'Courses' },
       { to: '/admin/assignments', icon: FileText, label: 'Assignments' },
       { to: '/admin/quizzes', icon: HelpCircle, label: 'Quizzes' },
       { to: '/admin/submissions', icon: CheckCircle, label: 'Submissions' },
+      { to: '/admin/rubrics', icon: CheckCircle, label: 'Rubrics' },
       { to: '/admin/growth', icon: TrendingUp, label: 'Growth' },
       { to: '/admin/members', icon: Users, label: 'Members' },
       { to: '/admin/teams', icon: Users, label: 'Teams' }
@@ -60,7 +61,7 @@ const RadialNavigation = () => {
       { to: '/leader', icon: Home, label: 'Dashboard' },
       { to: '/leader/team', icon: Users, label: 'My Team' },
       { to: '/leader/tasks', icon: ListTodo, label: 'Tasks' },
-      { to: '/member/assignments', icon: FileText, label: 'Assignments' },
+      { to: '/leader/evaluations', icon: CheckCircle, label: 'Evaluations' },
       { to: '/leader/progress', icon: Activity, label: 'Progress' },
       { to: '/leader/growth', icon: TrendingUp, label: 'Growth' },
       { to: '#notifications', icon: Bell, label: 'Alerts' }
@@ -72,6 +73,7 @@ const RadialNavigation = () => {
       { to: '/member/assignments', icon: FileText, label: 'Assignments' },
       { to: '/member/quizzes', icon: HelpCircle, label: 'Quizzes' },
       { to: '/member/tasks', icon: ListTodo, label: 'Tasks' },
+      { to: '/member/projects', icon: FileText, label: 'Projects' },
       { to: '/member/progress', icon: Activity, label: 'Progress' },
       { to: '/member/growth', icon: TrendingUp, label: 'Growth' },
       { to: '/member/skills', icon: Award, label: 'Skills' }

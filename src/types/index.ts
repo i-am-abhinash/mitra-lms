@@ -184,6 +184,54 @@ export interface ProjectMilestone {
   status: 'PENDING' | 'COMPLETED';
 }
 
+export type SubmissionStatus = 'DRAFT' | 'SUBMITTED' | 'UNDER_REVIEW' | 'CHANGES_REQUESTED' | 'RESUBMITTED' | 'EVALUATED' | 'ACCEPTED';
+
+export interface ProjectSubmission {
+  id?: string;
+  projectId: string;
+  memberId: string;
+  teamId: string;
+  githubUrl?: string;
+  demoVideoUrl?: string;
+  documentation?: string;
+  description?: string;
+  technologies?: string[];
+  reflection?: string;
+  challenges?: string;
+  improvements?: string;
+  status: SubmissionStatus;
+  submittedAt?: Timestamp | Date;
+  updatedAt: Timestamp | Date;
+}
+
+export interface RubricCriterion {
+  id: string;
+  name: string;
+  description: string;
+  weight: number; // 0-100 (weights across all criteria must sum to 100)
+}
+
+export interface Rubric {
+  id?: string;
+  title: string;
+  description: string;
+  passingScore: number;
+  version: number;
+  criteria: RubricCriterion[];
+}
+
+export interface Evaluation {
+  id?: string;
+  submissionId: string;
+  rubricId: string;
+  rubricVersion: number;
+  evaluatorId: string;
+  scores: Record<string, number>; // criterionId -> score (0-5)
+  feedback: string;
+  totalScore: number; // 0-100 weighted
+  evaluatedAt: Timestamp | Date;
+}
+
 export interface GrowthMetrics {
   userId: string;
   overallGrowth: number; // 0-100

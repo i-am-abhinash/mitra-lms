@@ -160,6 +160,33 @@ service cloud.firestore {
     }
 
     // =========================================================================
+    // PROJECT SUBMISSIONS & EVALUATION (Phase 4)
+    // =========================================================================
+
+    match /project_submissions/{subId} {
+      allow read: if isAuthenticated() && (
+        isAdmin() || 
+        (isLeader() && getTeamId() == resource.data.teamId) ||
+        request.auth.uid == resource.data.memberId
+      );
+      allow write: if isAuthenticated() && (
+        isAdmin() || 
+        (isLeader() && getTeamId() == request.resource.data.teamId) ||
+        request.auth.uid == request.resource.data.memberId
+      );
+    }
+
+    match /rubrics/{rubricId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /evaluations/{evalId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (isAdmin() || isLeader());
+    }
+
+    // =========================================================================
     // DEFAULT DENY
     // =========================================================================
     match /{document=**} {

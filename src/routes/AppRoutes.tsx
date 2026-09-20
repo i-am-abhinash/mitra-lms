@@ -21,6 +21,7 @@ import AdminSkills from '../pages/admin/AdminSkills';
 import AdminQuizzes from '../pages/admin/AdminQuizzes';
 import AdminNotifications from '../pages/admin/AdminNotifications';
 import AdminAuditLogs from '../pages/admin/AdminAuditLogs';
+import AdminRubrics from '../pages/admin/AdminRubrics';
 
 // Leader Pages
 import LeaderDashboard from '../pages/leader/LeaderDashboard';
@@ -29,6 +30,7 @@ import MemberOverview from '../pages/leader/MemberOverview';
 import LeaderProgress from '../pages/leader/LeaderProgress';
 import LeaderGrowth from '../pages/leader/LeaderGrowth';
 import LeaderTasks from '../pages/leader/LeaderTasks';
+import LeaderEvaluations from '../pages/leader/LeaderEvaluations';
 
 // Member Pages
 import MemberDashboard from '../pages/member/MemberDashboard';
@@ -43,6 +45,7 @@ import MemberSkills from '../pages/member/MemberSkills';
 import MemberQuizzes from '../pages/member/MemberQuizzes';
 import MemberQuizViewer from '../pages/member/MemberQuizViewer';
 import MemberTasks from '../pages/member/MemberTasks';
+import MemberProjectSubmit from '../pages/member/MemberProjectSubmit';
 
 // Auth Pages
 import Login from '../pages/auth/Login';
@@ -77,6 +80,7 @@ const AppRoutes = () => {
                   <Route path='quizzes' element={<AdminQuizzes />} />
                   <Route path='notifications' element={<AdminNotifications />} />
                   <Route path='audit-logs' element={<AdminAuditLogs />} />
+                  <Route path='rubrics' element={<AdminRubrics />} />
                 </Routes>
               </RouteGuard>
             } />
@@ -89,6 +93,7 @@ const AppRoutes = () => {
                   <Route path='team' element={<MyTeam />} />
                   <Route path='team/member/:memberId' element={<MemberOverview />} />
                   <Route path='tasks' element={<LeaderTasks />} />
+                  <Route path='evaluations' element={<LeaderEvaluations />} />
                   <Route path='progress' element={<LeaderProgress />} />
                   <Route path='growth' element={<LeaderGrowth />} />
                 </Routes>
@@ -108,6 +113,7 @@ const AppRoutes = () => {
                   <Route path='quizzes' element={<MemberQuizzes />} />
                   <Route path='quizzes/:quizId' element={<MemberQuizViewer />} />
                   <Route path='tasks' element={<MemberTasks />} />
+                  <Route path='projects' element={<MemberProjectSubmit />} />
                   <Route path='progress' element={<MemberProgress />} />
                   <Route path='growth' element={<MemberGrowth />} />
                   <Route path='skills' element={<MemberSkills />} />
