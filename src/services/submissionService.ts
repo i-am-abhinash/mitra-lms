@@ -30,3 +30,8 @@ export const updateSubmissionStatus = async (submissionId: string, status: Submi
   const docRef = doc(db, 'project_submissions', submissionId);
   await updateDoc(docRef, { status, updatedAt: Timestamp.now() });
 };
+
+export const fetchAllSubmissions = async (): Promise<ProjectSubmission[]> => {
+  const snap = await getDocs(collection(db, 'project_submissions'));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() } as ProjectSubmission));
+};
