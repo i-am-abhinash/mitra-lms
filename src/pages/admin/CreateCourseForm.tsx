@@ -32,16 +32,24 @@ export const CreateCourseForm = ({ onSubmit, onCancel }: Props) => {
     }
   });
 
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+
   const submitHandler = async (data: CourseFormData) => {
-    await onSubmit({
-      ...data,
-      thumbnailUrl: undefined,
-      createdBy: user?.id || 'unknown'
-    });
+    setErrorMsg(null);
+    try {
+      await onSubmit({
+        ...data,
+        thumbnailUrl: undefined,
+        createdBy: user?.id || 'unknown'
+      });
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Failed to create course');
+    }
   };
 
   return (
     <form onSubmit={handleSubmit(submitHandler)} className='space-y-4'>
+      {errorMsg && <div className='p-3 bg-theme-absent-bg text-theme-absent rounded-lg text-sm'>{errorMsg}</div>}
       <div>
         <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Title</label>
         <input {...register('title')} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors' />
@@ -81,7 +89,7 @@ export const CreateCourseForm = ({ onSubmit, onCancel }: Props) => {
           </select>
         </div>
       </div>
-      <div className='flex justify-end gap-3 mt-6 pt-4 border-t border-theme-border-subtle'>
+      <div className='sticky -bottom-5 -mx-5 -mb-5 px-5 py-4 bg-theme-surface border-t border-theme-border-subtle flex justify-end gap-3 mt-6'>
         <button type='button' onClick={onCancel} className='px-4 py-2 rounded-lg text-theme-text-secondary hover:bg-theme-surface-higher transition-colors'>Cancel</button>
         <button type='submit' disabled={isSubmitting} className='px-4 py-2 rounded-lg bg-theme-accent hover:bg-theme-accent-hover text-white transition-colors shadow-glow disabled:opacity-50'>{isSubmitting ? 'Saving...' : 'Create Course'}</button>
       </div>

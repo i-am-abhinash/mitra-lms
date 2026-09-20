@@ -40,7 +40,7 @@ const MemberAssignmentDetail = () => {
         const subData = await getMemberSubmission(user!.id!, aData.id!);
         if (subData) {
           setSubmission(subData);
-          setSubmissionContent(subData.content);
+          setSubmissionContent(subData.content || subData.githubUrl || subData.fileUrl || subData.folderUrl || '');
         }
       }
     } catch (err) {
@@ -51,19 +51,30 @@ const MemberAssignmentDetail = () => {
   };
 
   const handleSave = async (isDraft: boolean) => {
-    if (!user || !assignment || !course) return;
+    if (!user || !assignment) return;
     setIsSubmitting(true);
     try {
       const newStatus = isDraft ? 'DRAFT' : 'SUBMITTED';
-      await saveSubmission({
+      
+      let payload: Partial<Submission> = {
         assignmentId: assignment.id!,
         memberId: user.id!,
         teamId: user.teamId || '',
-        courseId: course.id!,
+        courseId: course?.id || '',
         status: newStatus,
         submittedAt: Timestamp.now(),
         content: submissionContent
-      });
+      };
+
+      if (assignment.submissionType === 'GITHUB_REPOSITORY') {
+        payload.githubUrl = submissionContent;
+      } else if (assignment.submissionType === 'FILE') {
+        payload.fileUrl = submissionContent;
+      } else if (assignment.submissionType === 'FOLDER') {
+        payload.folderUrl = submissionContent;
+      }
+
+      await saveSubmission(payload as any);
       // reload to get updated state
       await loadData();
     } catch (err) {
@@ -130,14 +141,50 @@ const MemberAssignmentDetail = () => {
                 <label className='block text-sm font-medium text-theme-text-secondary mb-2'>
                   Submission Content ({assignment.submissionType.replace('_', ' ')})
                 </label>
-                <textarea 
-                  required
-                  disabled={isSubmitted}
-                  value={submissionContent}
-                  onChange={(e) => setSubmissionContent(e.target.value)}
-                  className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-3 text-theme-text focus:border-theme-accent outline-none min-h-[150px] disabled:opacity-50'
-                  placeholder='Enter your submission or provide the URL...'
-                />
+                
+                {assignment.submissionType === 'GITHUB_REPOSITORY' && (
+                  <input 
+                    type='url'
+                    required
+                    disabled={isSubmitted}
+                    value={submissionContent}
+                    onChange={(e) => setSubmissionContent(e.target.value)}
+                    className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-3 text-theme-text focus:border-theme-accent outline-none disabled:opacity-50'
+                    placeholder='https://github.com/username/project'
+                  />
+                )}
+                
+                {assignment.submissionType === 'FILE' && (
+                  <input 
+                    type='file'
+                    required
+                    disabled={isSubmitted}
+                    onChange={(e) => setSubmissionContent(e.target.files?.[0]?.name || '')}
+                    className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-3 text-theme-text focus:border-theme-accent outline-none disabled:opacity-50'
+                  />
+                )}
+                
+                {assignment.submissionType === 'FOLDER' && (
+                  <input 
+                    type='file'
+                    {...{ webkitdirectory: '', directory: '' } as any}
+                    required
+                    disabled={isSubmitted}
+                    onChange={(e) => setSubmissionContent(e.target.files?.[0]?.webkitRelativePath?.split('/')[0] || 'Uploaded Folder')}
+                    className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-3 text-theme-text focus:border-theme-accent outline-none disabled:opacity-50'
+                  />
+                )}
+                
+                {!['GITHUB_REPOSITORY', 'FILE', 'FOLDER'].includes(assignment.submissionType) && (
+                  <textarea 
+                    required
+                    disabled={isSubmitted}
+                    value={submissionContent}
+                    onChange={(e) => setSubmissionContent(e.target.value)}
+                    className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-3 text-theme-text focus:border-theme-accent outline-none min-h-[150px] disabled:opacity-50'
+                    placeholder='Enter your submission or provide the URL...'
+                  />
+                )}
               </div>
 
               {!isSubmitted && (

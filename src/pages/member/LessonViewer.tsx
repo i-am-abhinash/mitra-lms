@@ -22,8 +22,11 @@ const LessonViewer = () => {
 
   // Assignment submission state
   const [githubUrl, setGithubUrl] = useState('');
+  const [file, setFile] = useState<File | null>(null);
+  const [folder, setFolder] = useState<FileList | null>(null);
   const [submittingAssignment, setSubmittingAssignment] = useState(false);
   const [assignmentSubmitted, setAssignmentSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   useEffect(() => {
     if (lessonId && user) loadData();
@@ -80,15 +83,17 @@ const LessonViewer = () => {
 
   const handleAssignmentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!githubUrl) return;
+    setSubmitError('');
+    if (!githubUrl && !file && !folder) {
+      setSubmitError('Please provide at least one submission.');
+      return;
+    }
     setSubmittingAssignment(true);
     try {
-      // Store assignment submission (reuse existing saveProjectSubmission pattern or just mark complete)
-      // For V1: mark lesson complete after submitting assignment
       await handleMarkComplete();
       setAssignmentSubmitted(true);
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      setSubmitError(err.message || 'Submission failed');
     } finally {
       setSubmittingAssignment(false);
     }
@@ -186,10 +191,11 @@ const LessonViewer = () => {
               <CheckCircle size={20} /> Assignment submitted successfully
             </div>
           ) : (
-            <form onSubmit={handleAssignmentSubmit} className='space-y-3'>
+            <form onSubmit={handleAssignmentSubmit} className='space-y-4'>
+              {submitError && <div className='p-3 bg-theme-absent-bg text-theme-absent rounded-lg text-sm'>{submitError}</div>}
               <div>
                 <label className='block text-sm font-medium text-theme-text-secondary mb-1'>
-                  <GitBranch size={14} className='inline mr-1' /> GitHub Repository
+                  <GitBranch size={14} className='inline mr-1' /> GitHub Repository URL
                 </label>
                 <input
                   type='url'
@@ -199,10 +205,28 @@ const LessonViewer = () => {
                   placeholder='https://github.com/username/project'
                 />
               </div>
-              <p className='text-xs text-theme-muted'>At least one submission method required.</p>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div>
+                  <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Upload File</label>
+                  <input
+                    type='file'
+                    onChange={e => setFile(e.target.files?.[0] || null)}
+                    className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2 text-theme-text text-sm'
+                  />
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Upload Folder</label>
+                  <input
+                    type='file'
+                    {...{ webkitdirectory: '', directory: '' } as any}
+                    onChange={e => setFolder(e.target.files)}
+                    className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2 text-theme-text text-sm'
+                  />
+                </div>
+              </div>
               <button
                 type='submit'
-                disabled={submittingAssignment || !githubUrl}
+                disabled={submittingAssignment}
                 className='flex items-center gap-2 px-5 py-2 bg-theme-accent hover:bg-theme-accent-hover text-white rounded-lg transition-colors font-medium disabled:opacity-50'
               >
                 <Upload size={16} /> Submit Assignment

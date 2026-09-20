@@ -6,6 +6,7 @@ import type { Assignment, Quiz, Course } from '../../types';
 import { Plus, FileText, HelpCircle, Trash2, Calendar, GitBranch, UploadCloud, ChevronDown } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
 import { CreateAssignmentForm } from './CreateAssignmentForm';
+import { CreateQuizForm } from './CreateQuizForm';
 import { format } from 'date-fns';
 
 type Filter = 'All' | 'Assignments' | 'Quizzes';
@@ -21,7 +22,6 @@ const AdminAssessmentsHub = () => {
   const [showTypeMenu, setShowTypeMenu] = useState(false);
   const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
   const [isQuizModalOpen, setIsQuizModalOpen] = useState(false);
-  const [newQuiz, setNewQuiz] = useState({ title: '', description: '', courseId: '', timeLimitMinutes: 30, passingScore: 70 });
 
   useEffect(() => { loadData(); }, []);
 
@@ -59,16 +59,10 @@ const AdminAssessmentsHub = () => {
     loadData();
   };
 
-  const handleCreateQuiz = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCreateQuiz = async (data: any) => {
     try {
-      await createQuiz({
-        ...newQuiz,
-        questions: [{ id: 'q1', text: 'Sample Question', type: 'MULTIPLE_CHOICE', options: ['A', 'B', 'C', 'D'], correctAnswer: 'A', points: 10 }],
-        status: 'PUBLISHED'
-      });
+      await createQuiz(data);
       setIsQuizModalOpen(false);
-      setNewQuiz({ title: '', description: '', courseId: '', timeLimitMinutes: 30, passingScore: 70 });
       loadData();
     } catch (err) {
       console.error(err);
@@ -208,27 +202,7 @@ const AdminAssessmentsHub = () => {
 
       {/* Quiz Modal */}
       <Modal isOpen={isQuizModalOpen} onClose={() => setIsQuizModalOpen(false)} title='Create New Quiz'>
-        <form onSubmit={handleCreateQuiz} className='space-y-4'>
-          <div>
-            <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Course (optional)</label>
-            <select value={newQuiz.courseId} onChange={e => setNewQuiz({...newQuiz, courseId: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none'>
-              <option value=''>Standalone (no course)</option>
-              {Object.values(courses).map(c => <option key={c.id} value={c.id!}>{c.title}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Title</label>
-            <input required type='text' value={newQuiz.title} onChange={e => setNewQuiz({...newQuiz, title: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none' />
-          </div>
-          <div>
-            <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Description</label>
-            <textarea required value={newQuiz.description} onChange={e => setNewQuiz({...newQuiz, description: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none' rows={3} />
-          </div>
-          <div className='flex justify-end gap-3 pt-4 border-t border-theme-border-subtle'>
-            <button type='button' onClick={() => setIsQuizModalOpen(false)} className='px-4 py-2 rounded-lg text-theme-text-secondary hover:bg-theme-surface-higher transition-colors'>Cancel</button>
-            <button type='submit' className='px-4 py-2 bg-theme-accent hover:bg-theme-accent-hover text-white rounded-lg font-medium shadow-glow'>Create Quiz</button>
-          </div>
-        </form>
+        <CreateQuizForm onCancel={() => setIsQuizModalOpen(false)} onSubmit={handleCreateQuiz} />
       </Modal>
     </div>
   );

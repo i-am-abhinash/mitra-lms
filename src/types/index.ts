@@ -90,15 +90,21 @@ export interface Submission {
   id?: string;
   assignmentId: string;
   memberId: string;
-  teamId: string;
-  courseId: string;
+  teamId?: string; // made optional
+  courseId?: string; // made optional
   status: 'DRAFT' | 'SUBMITTED' | 'LATE' | 'EVALUATED';
-  submittedAt: Timestamp | Date;
-  content: string; // URL, text, or file reference
+  submittedAt: any; // Timestamp
+  githubUrl?: string;
+  fileUrl?: string;
+  folderUrl?: string;
+  content?: string;
+  obtainedMarks?: number;
+  maximumMarks?: number;
   score?: number;
   feedback?: string;
+  evaluatorId?: string;
   evaluatedBy?: string;
-  evaluatedAt?: Timestamp | Date;
+  evaluatedAt?: any; // Timestamp
 }
 
 export interface QuizQuestion {

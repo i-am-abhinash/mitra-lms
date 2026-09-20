@@ -8,10 +8,10 @@ import { Timestamp } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 
 const assignmentSchema = z.object({
-  courseId: z.string().min(1, 'Course is required'),
+  courseId: z.string().optional().or(z.literal('')),
   title: z.string().min(3, 'Title is required'),
   description: z.string().min(10, 'Description is required'),
-  submissionType: z.enum(['GITHUB_REPOSITORY', 'FILE', 'URL']),
+  submissionType: z.enum(['GITHUB_REPOSITORY', 'FILE', 'FOLDER']),
   maxMarks: z.number().min(1, 'Points must be at least 1'),
   deadline: z.string().min(1, 'Deadline is required')
 });
@@ -37,7 +37,7 @@ export const CreateAssignmentForm = ({ onSubmit, onCancel }: Props) => {
 
   const submitHandler = async (data: AssignmentFormData) => {
     await onSubmit({
-      courseId: data.courseId,
+      courseId: data.courseId || '',
       title: data.title,
       description: data.description,
       submissionType: data.submissionType,
@@ -54,7 +54,7 @@ export const CreateAssignmentForm = ({ onSubmit, onCancel }: Props) => {
       <div>
         <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Course</label>
         <select {...register('courseId')} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors'>
-          <option value=''>Select a course...</option>
+          <option value=''>Standalone / No Course</option>
           {courses.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
         </select>
         {errors.courseId && <p className='text-theme-absent text-xs mt-1'>{errors.courseId.message}</p>}
@@ -73,13 +73,13 @@ export const CreateAssignmentForm = ({ onSubmit, onCancel }: Props) => {
         <div>
           <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Submission Type</label>
           <select {...register('submissionType')} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors'>
-            <option value='GITHUB_REPOSITORY'>GitHub Repository URL</option>
+            <option value='GITHUB_REPOSITORY'>GitHub Repository</option>
             <option value='FILE'>File Upload</option>
-            <option value='URL'>URL Submission</option>
+            <option value='FOLDER'>Folder Upload</option>
           </select>
         </div>
         <div>
-          <label className='bloci+text-sm font-medium text-theme-text-secondary mb-1'>Points</label>
+          <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Maximum Marks</label>
           <input type='number' {...register('maxMarks', { valueAsNumber: true })} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors' />
           {errors.maxMarks && <p className='text-theme-absent text-xs mt-1'>{errors.maxMarks.message}</p>}
         </div>
