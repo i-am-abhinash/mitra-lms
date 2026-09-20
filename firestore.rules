@@ -126,6 +126,40 @@ service cloud.firestore {
     }
 
     // =========================================================================
+    // TEAM OBJECTIVES, TASKS, & PROJECTS (Phase 3)
+    // =========================================================================
+
+    match /objectives/{objectiveId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (isAdmin() || (isLeader() && getTeamId() == request.resource.data.teamId));
+    }
+    match /constraints/{constraintId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (isAdmin() || (isLeader() && getTeamId() == request.resource.data.teamId));
+    }
+    match /tasks/{taskId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (isAdmin() || (isLeader() && getTeamId() == request.resource.data.teamId));
+    }
+    match /task_assignments/{assignmentId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (
+        isAdmin() || 
+        isLeader() ||
+        request.auth.uid == resource.data.memberId ||
+        request.auth.uid == request.resource.data.memberId
+      );
+    }
+    match /projects/{projectId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && (isAdmin() || (isLeader() && getTeamId() == request.resource.data.teamId));
+    }
+    match /project_milestones/{milestoneId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated(); // Broadly allowing team members to update milestones for now
+    }
+
+    // =========================================================================
     // DEFAULT DENY
     // =========================================================================
     match /{document=**} {

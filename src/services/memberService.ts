@@ -1,4 +1,4 @@
-﻿import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, doc, setDoc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 import { db } from './firebase';
@@ -14,7 +14,7 @@ const secondaryApp = initializeApp({
 
 const secondaryAuth = getAuth(secondaryApp);
 
-export const fetchMembers = async (teamId = undefined) => {
+export const fetchMembers = async (teamId?: string) => {
   let q = collection(db, 'users');
   if (teamId !== undefined) {
     q = query(q, where("teamId", "==", teamId));

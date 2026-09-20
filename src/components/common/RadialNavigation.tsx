@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
   Home, Users, Settings, LogOut,
-  BookOpen, FileText, CheckCircle, TrendingUp, Activity, Award, Bell, List, HelpCircle
+  BookOpen, FileText, CheckCircle, TrendingUp, Activity, Award, Bell, List, HelpCircle, ListTodo
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -59,6 +59,7 @@ const RadialNavigation = () => {
     navItems = [
       { to: '/leader', icon: Home, label: 'Dashboard' },
       { to: '/leader/team', icon: Users, label: 'My Team' },
+      { to: '/leader/tasks', icon: ListTodo, label: 'Tasks' },
       { to: '/member/assignments', icon: FileText, label: 'Assignments' },
       { to: '/leader/progress', icon: Activity, label: 'Progress' },
       { to: '/leader/growth', icon: TrendingUp, label: 'Growth' },
@@ -70,6 +71,7 @@ const RadialNavigation = () => {
       { to: '/member/learning', icon: BookOpen, label: 'Learning' },
       { to: '/member/assignments', icon: FileText, label: 'Assignments' },
       { to: '/member/quizzes', icon: HelpCircle, label: 'Quizzes' },
+      { to: '/member/tasks', icon: ListTodo, label: 'Tasks' },
       { to: '/member/progress', icon: Activity, label: 'Progress' },
       { to: '/member/growth', icon: TrendingUp, label: 'Growth' },
       { to: '/member/skills', icon: Award, label: 'Skills' }

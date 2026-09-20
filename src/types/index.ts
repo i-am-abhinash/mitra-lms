@@ -131,6 +131,59 @@ export interface QuizAttempt {
   submittedAt: Timestamp | Date;
 }
 
+export interface Objective {
+  id?: string;
+  teamId: string;
+  period: string; // e.g. "2026-09"
+  target: string;
+  metricType: string;
+}
+
+export interface Constraint {
+  id?: string;
+  teamId: string;
+  objectiveId: string;
+  type: string;
+  target: number;
+  period: string;
+  threshold: number;
+}
+
+export interface Task {
+  id?: string;
+  teamId: string;
+  objectiveId?: string;
+  constraintId?: string;
+  title: string;
+  deadline: Timestamp | Date;
+}
+
+export interface TaskAssignment {
+  id?: string;
+  taskId: string;
+  memberId: string;
+  status: 'PENDING' | 'COMPLETED';
+  completedAt?: Timestamp | Date;
+}
+
+export interface Project {
+  id?: string;
+  teamId: string;
+  objectiveId?: string;
+  courseId?: string;
+  title: string;
+  deadline: Timestamp | Date;
+  rubricId?: string;
+}
+
+export interface ProjectMilestone {
+  id?: string;
+  projectId: string;
+  title: string;
+  deadline: Timestamp | Date;
+  status: 'PENDING' | 'COMPLETED';
+}
+
 export interface GrowthMetrics {
   userId: string;
   overallGrowth: number; // 0-100

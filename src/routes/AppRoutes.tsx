@@ -28,6 +28,7 @@ import MyTeam from '../pages/leader/MyTeam';
 import MemberOverview from '../pages/leader/MemberOverview';
 import LeaderProgress from '../pages/leader/LeaderProgress';
 import LeaderGrowth from '../pages/leader/LeaderGrowth';
+import LeaderTasks from '../pages/leader/LeaderTasks';
 
 // Member Pages
 import MemberDashboard from '../pages/member/MemberDashboard';
@@ -41,6 +42,7 @@ import MemberGrowth from '../pages/member/MemberGrowth';
 import MemberSkills from '../pages/member/MemberSkills';
 import MemberQuizzes from '../pages/member/MemberQuizzes';
 import MemberQuizViewer from '../pages/member/MemberQuizViewer';
+import MemberTasks from '../pages/member/MemberTasks';
 
 // Auth Pages
 import Login from '../pages/auth/Login';
@@ -83,9 +85,10 @@ const AppRoutes = () => {
             <Route path='/leader/*' element={
               <RouteGuard allowedRoles={['Admin', 'Team Leader']}>
                 <Routes>
-                  <Route path='' element={<LeaderDashboard />} />
+                  <Route index element={<LeaderDashboard />} />
                   <Route path='team' element={<MyTeam />} />
                   <Route path='team/member/:memberId' element={<MemberOverview />} />
+                  <Route path='tasks' element={<LeaderTasks />} />
                   <Route path='progress' element={<LeaderProgress />} />
                   <Route path='growth' element={<LeaderGrowth />} />
                 </Routes>
@@ -96,17 +99,18 @@ const AppRoutes = () => {
             <Route path='/member/*' element={
               <RouteGuard allowedRoles={['Admin', 'Team Leader', 'Member']}>
                 <Routes>
-                  <Route path='' element={<MemberDashboard />} />
+                  <Route index element={<MemberDashboard />} />
                   <Route path='learning' element={<MemberLearning />} />
-                  <Route path='learning/course/:courseId' element={<MemberCourseDetail />} />
-                  <Route path='learning/lesson/:lessonId' element={<LessonViewer />} />
+                  <Route path='learning/:courseId' element={<MemberCourseDetail />} />
+                  <Route path='learning/:courseId/lesson/:lessonId' element={<LessonViewer />} />
                   <Route path='assignments' element={<MemberAssignments />} />
                   <Route path='assignments/:assignmentId' element={<MemberAssignmentDetail />} />
+                  <Route path='quizzes' element={<MemberQuizzes />} />
+                  <Route path='quizzes/:quizId' element={<MemberQuizViewer />} />
+                  <Route path='tasks' element={<MemberTasks />} />
                   <Route path='progress' element={<MemberProgress />} />
                   <Route path='growth' element={<MemberGrowth />} />
                   <Route path='skills' element={<MemberSkills />} />
-                  <Route path='quizzes' element={<MemberQuizzes />} />
-                  <Route path='quizzes/:quizId' element={<MemberQuizViewer />} />
                 </Routes>
               </RouteGuard>
             } />
