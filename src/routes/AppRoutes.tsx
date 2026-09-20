@@ -2,6 +2,10 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from '../components/common/Layout';
 import { useAuth } from '../context/AuthContext';
+import { RouteGuard } from '../components/common/RouteGuard';
+
+// Common
+import Unauthorized from '../pages/common/Unauthorized';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -38,7 +42,7 @@ import MemberSkills from '../pages/member/MemberSkills';
 import MemberQuizzes from '../pages/member/MemberQuizzes';
 
 const AppRoutes = () => {
-  const { user, isAdmin, isLeader, isMember } = useAuth();
+  const { user, isAdmin, isLeader } = useAuth();
 
   if (!user) return <Navigate to='/login' />;
 
@@ -47,47 +51,59 @@ const AppRoutes = () => {
       <Routes>
         <Route path='/' element={<Navigate to={isAdmin ? '/admin' : isLeader ? '/leader' : '/member'} replace />} />
         
-        {/* Admin Routes */}
-        {isAdmin && (
-          <>
-            <Route path='/admin' element={<AdminDashboard />} />
-            <Route path='/admin/courses' element={<AdminCourses />} />
-            <Route path='/admin/courses/:courseId' element={<AdminCourseDetail />} />
-            <Route path='/admin/assignments' element={<AdminAssignments />} />
-            <Route path='/admin/submissions' element={<AdminSubmissions />} />
-            <Route path='/admin/members' element={<AdminMembersList />} />
-            <Route path='/admin/teams' element={<AdminTeamsList />} />
-            <Route path='/admin/progress' element={<AdminProgress />} />
-            <Route path='/admin/growth' element={<AdminGrowth />} />
-            <Route path='/admin/skills' element={<AdminSkills />} />
-            <Route path='/admin/quizzes' element={<AdminQuizzes />} />
-            <Route path='/admin/notifications' element={<AdminNotifications />} />
-            <Route path='/admin/audit-logs' element={<AdminAuditLogs />} />
-          </>
-        )}
+        <Route path='/unauthorized' element={<Unauthorized />} />
 
-        {/* Leader Routes */}
-        {(isAdmin || isLeader) && (
-          <>
-            <Route path='/leader' element={<LeaderDashboard />} />
-            <Route path='/leader/team' element={<MyTeam />} />
-            <Route path='/leader/team/member/:memberId' element={<MemberOverview />} />
-            <Route path='/leader/progress' element={<LeaderProgress />} />
-            <Route path='/leader/growth' element={<LeaderGrowth />} />
-          </>
-        )}
+        {/* Admin Routes - Strictly Protected */}
+        <Route path='/admin/*' element={
+          <RouteGuard allowedRoles={['Admin']}>
+            <Routes>
+              <Route path='' element={<AdminDashboard />} />
+              <Route path='courses' element={<AdminCourses />} />
+              <Route path='courses/:courseId' element={<AdminCourseDetail />} />
+              <Route path='assignments' element={<AdminAssignments />} />
+              <Route path='submissions' element={<AdminSubmissions />} />
+              <Route path='members' element={<AdminMembersList />} />
+              <Route path='teams' element={<AdminTeamsList />} />
+              <Route path='progress' element={<AdminProgress />} />
+              <Route path='growth' element={<AdminGrowth />} />
+              <Route path='skills' element={<AdminSkills />} />
+              <Route path='quizzes' element={<AdminQuizzes />} />
+              <Route path='notifications' element={<AdminNotifications />} />
+              <Route path='audit-logs' element={<AdminAuditLogs />} />
+            </Routes>
+          </RouteGuard>
+        } />
 
-        {/* Member Routes */}
-        <Route path='/member' element={<MemberDashboard />} />
-        <Route path='/member/learning' element={<MemberLearning />} />
-        <Route path='/member/learning/course/:courseId' element={<MemberCourseDetail />} />
-        <Route path='/member/learning/lesson/:lessonId' element={<LessonViewer />} />
-        <Route path='/member/assignments' element={<MemberAssignments />} />
-        <Route path='/member/assignments/:assignmentId' element={<MemberAssignmentDetail />} />
-        <Route path='/member/progress' element={<MemberProgress />} />
-        <Route path='/member/growth' element={<MemberGrowth />} />
-        <Route path='/member/skills' element={<MemberSkills />} />
-        <Route path='/member/quizzes' element={<MemberQuizzes />} />
+        {/* Leader Routes - Strictly Protected */}
+        <Route path='/leader/*' element={
+          <RouteGuard allowedRoles={['Admin', 'Team Leader']}>
+            <Routes>
+              <Route path='' element={<LeaderDashboard />} />
+              <Route path='team' element={<MyTeam />} />
+              <Route path='team/member/:memberId' element={<MemberOverview />} />
+              <Route path='progress' element={<LeaderProgress />} />
+              <Route path='growth' element={<LeaderGrowth />} />
+            </Routes>
+          </RouteGuard>
+        } />
+
+        {/* Member Routes - Accessible by all roles for learning/viewing */}
+        <Route path='/member/*' element={
+          <RouteGuard allowedRoles={['Admin', 'Team Leader', 'Member']}>
+            <Routes>
+              <Route path='' element={<MemberDashboard />} />
+              <Route path='learning' element={<MemberLearning />} />
+              <Route path='learning/course/:courseId' element={<MemberCourseDetail />} />
+              <Route path='learning/lesson/:lessonId' element={<LessonViewer />} />
+              <Route path='assignments' element={<MemberAssignments />} />
+              <Route path='assignments/:assignmentId' element={<MemberAssignmentDetail />} />
+              <Route path='progress' element={<MemberProgress />} />
+              <Route path='growth' element={<MemberGrowth />} />
+              <Route path='skills' element={<MemberSkills />} />
+              <Route path='quizzes' element={<MemberQuizzes />} />
+            </Routes>
+          </RouteGuard>
+        } />
       </Routes>
     </Layout>
   );

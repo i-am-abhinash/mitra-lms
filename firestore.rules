@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // =========================================================================
+    // HELPER FUNCTIONS
+    // =========================================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      // Resolves role/team from trusted core data, never client-supplied claims
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && getUserData().role == 'Admin';
+    }
+    
+    function isLeader() {
+      return isAuthenticated() && getUserData().role == 'Team Leader';
+    }
+    
+    function getTeamId() {
+      return getUserData().teamId;
+    }
+
+    // =========================================================================
+    // CORE COLLECTIONS (Phase 0)
+    // =========================================================================
+
+    // Users Collection (Shared Integration)
+    match /users/{userId} {
+      // - Users can read their own profile
+      // - Admins can read all profiles
+      // - Team Leaders can read profiles of members in their team
+      allow read: if isAuthenticated() && (
+        request.auth.uid == userId || 
+        isAdmin() || 
+        (isLeader() && getTeamId() == resource.data.teamId)
+      );
+      
+      // Only Admins can modify core identity/role assignments
+      allow write: if isAdmin();
+    }
+    
+    // Teams Collection (Shared Integration)
+    match /teams/{teamId} {
+      // All authenticated users can read team configurations
+      allow read: if isAuthenticated();
+      
+      // Only Admins can create/modify/delete teams
+      allow write: if isAdmin();
+    }
+    
+    // =========================================================================
+    // DEFAULT DENY
+    // =========================================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
