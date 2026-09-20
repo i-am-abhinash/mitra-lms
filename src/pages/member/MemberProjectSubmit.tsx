@@ -67,6 +67,10 @@ const MemberProjectSubmit = () => {
         githubUrl: formData.githubUrl,
         demoVideoUrl: formData.demoVideoUrl,
         documentation: formData.documentation,
+        description: formData.description,
+        technologies: formData.technologies,
+        challenges: formData.challenges,
+        improvements: formData.improvements,
         reflection: formData.reflection,
         status,
         updatedAt: Timestamp.now(),
@@ -123,20 +127,36 @@ const MemberProjectSubmit = () => {
 
           <form className='space-y-4' onSubmit={e => e.preventDefault()}>
             <div>
-              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'><FileCode size={16} className='inline mr-1' /> GitHub URL</label>
-              <input type='url' value={formData.githubUrl} onChange={e => setFormData({...formData, githubUrl: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent' placeholder='https://github.com/...' />
+              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'>Project Overview</label>
+              <textarea value={formData.description || ''} onChange={e => setFormData({...formData, description: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent min-h-[80px]' placeholder='Short project description' />
             </div>
             <div>
-              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'><PlaySquare size={16} className='inline mr-1' /> Demo Video URL</label>
-              <input type='url' value={formData.demoVideoUrl} onChange={e => setFormData({...formData, demoVideoUrl: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent' placeholder='https://youtube.com/...' />
+              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'>Technologies</label>
+              <input type='text' value={(formData.technologies || []).join(', ')} onChange={e => setFormData({...formData, technologies: e.target.value.split(',').map(s => s.trim())})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent' placeholder='Python, React, PyTorch, etc.' />
             </div>
             <div>
-              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'><FileText size={16} className='inline mr-1' /> Documentation / README</label>
-              <textarea value={formData.documentation} onChange={e => setFormData({...formData, documentation: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent min-h-[100px]' />
+              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'><FileCode size={16} className='inline mr-1' /> GitHub Repository</label>
+              <input type='url' value={formData.githubUrl || ''} onChange={e => setFormData({...formData, githubUrl: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent' placeholder='https://github.com/...' />
             </div>
             <div>
-              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'>Reflection</label>
-              <textarea value={formData.reflection} onChange={e => setFormData({...formData, reflection: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent min-h-[100px]' placeholder='What did you learn? What were the challenges?' />
+              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'><PlaySquare size={16} className='inline mr-1' /> Project Demo Video</label>
+              <input type='url' value={formData.demoVideoUrl || ''} onChange={e => setFormData({...formData, demoVideoUrl: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent' placeholder='Paste your public/unlisted demo video URL (LinkedIn, YouTube, etc.)' />
+            </div>
+            <div>
+              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'><FileText size={16} className='inline mr-1' /> Documentation URL</label>
+              <input type='url' value={formData.documentation || ''} onChange={e => setFormData({...formData, documentation: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent' placeholder='https://...' />
+            </div>
+            <div>
+              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'>Challenges</label>
+              <textarea value={formData.challenges || ''} onChange={e => setFormData({...formData, challenges: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent min-h-[80px]' placeholder='What challenges did you face?' />
+            </div>
+            <div>
+              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'>What I Learned</label>
+              <textarea value={formData.reflection || ''} onChange={e => setFormData({...formData, reflection: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent min-h-[80px]' placeholder='What did you learn?' />
+            </div>
+            <div>
+              <label className='block text-sm font-medium mb-1 text-theme-text-secondary'>Future Improvements</label>
+              <textarea value={formData.improvements || ''} onChange={e => setFormData({...formData, improvements: e.target.value})} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 outline-none focus:border-theme-accent min-h-[80px]' placeholder='What could be improved?' />
             </div>
 
             <div className='flex gap-3 pt-4'>

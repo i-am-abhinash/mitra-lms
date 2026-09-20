@@ -13,7 +13,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
 import { checkAdminExists, setAdminExists } from './configService';
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (email: string, password: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
@@ -45,12 +45,12 @@ export const loginUser = async (email, password) => {
   }
 };
 
-export const registerUser = async (email, password) => {
+export const registerUser = async (email: string, password: string) => {
   return createUserWithEmailAndPassword(auth, email, password);
 };
 
 // Admin uses this to create users WITHOUT logging themselves out
-export const adminCreateUser = async (email, password, userData) => {
+export const adminCreateUser = async (email: string, password: string, userData: Record<string, any>) => {
   // Use the same config as the main app
   const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -85,7 +85,7 @@ export const logoutUser = async () => {
   return signOut(auth);
 };
 
-export const changeUserPassword = async (currentPassword, newPassword) => {
+export const changeUserPassword = async (currentPassword: string, newPassword: string) => {
   const user = auth.currentUser;
   if (!user) throw new Error("No user is signed in.");
   
@@ -97,7 +97,7 @@ export const changeUserPassword = async (currentPassword, newPassword) => {
   await updatePassword(user, newPassword);
 };
 
-export const subscribeToAuthChanges = (callback) => {
+export const subscribeToAuthChanges = (callback: (user: any) => void) => {
   return onAuthStateChanged(auth, async (user) => {
     if (user) {
       try {

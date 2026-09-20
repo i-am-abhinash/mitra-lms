@@ -31,7 +31,7 @@ export const fetchExternalMembers = async () => {
   return allUsers.filter((u: any) => u.role === 'Member' && !u.teamId);
 };
 
-export const createMember = async (memberData) => {
+export const createMember = async (memberData: Record<string, any>) => {
   const { email, password, name, role } = memberData;
   const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
   const uid = userCredential.user.uid;
@@ -49,11 +49,11 @@ export const createMember = async (memberData) => {
   return { id: uid, ...userData };
 };
 
-export const updateMember = async (userId, memberData) => {
+export const updateMember = async (userId: string, memberData: Record<string, any>) => {
   const userRef = doc(db, 'users', userId);
   await updateDoc(userRef, memberData);
 };
 
-export const deleteMember = async (userId) => {
+export const deleteMember = async (userId: string) => {
   await deleteDoc(doc(db, 'users', userId));
 };

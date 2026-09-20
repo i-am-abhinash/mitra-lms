@@ -6,7 +6,8 @@ export const checkAdminExists = async () => {
     const statusDoc = await getDoc(doc(db, 'club', 'status'));
     return statusDoc.exists() && statusDoc.data().adminExists === true;
   } catch (error) {
-    if (error.code !== 'permission-denied') {
+    const e = error as any;
+    if (e?.code !== 'permission-denied') {
       console.error("Error checking admin status:", error);
     }
     throw error;

@@ -88,14 +88,16 @@ const RadialNavigation = () => {
   ];
   
   const totalItems = allItems.length;
-  const radius = isMobile ? 85 : 100; 
+  // Increase radius significantly based on items, min 140
+  const radius = isMobile ? 120 : Math.max(140, totalItems * 18); 
   const arcRadius = radius - 15; 
 
   const getAngle = (index: number, total: number) => {
     if (total === 1) return 0;
-    const maxSpread = 160; 
+    // Use a wider spread for more items
+    const maxSpread = Math.min(180, total * 20); 
     const step = maxSpread / (total - 1);
-    const startAngle = -80;
+    const startAngle = -(maxSpread / 2);
     return (startAngle + index * step) * (Math.PI / 180);
   };
 
@@ -128,7 +130,7 @@ const RadialNavigation = () => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className='relative flex items-center h-[300px]'>
+        <div className='relative flex items-center h-[500px]'>
           <button 
             className={clsx(
               'relative z-50 flex items-center justify-center rounded-full bg-theme-surface-higher border-2 transition-all duration-300 shadow-float',
