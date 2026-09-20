@@ -79,6 +79,7 @@ export interface Assignment {
   moduleId: string | null;
   deadline: Timestamp | Date;
   maxMarks: number;
+  rubricId?: string;
   submissionType: 'FILE' | 'TEXT' | 'URL' | 'GITHUB_REPOSITORY' | 'MULTIPLE';
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
   createdAt: Timestamp | Date;
@@ -91,7 +92,7 @@ export interface Submission {
   memberId: string;
   teamId: string;
   courseId: string;
-  status: 'SUBMITTED' | 'LATE' | 'EVALUATED';
+  status: 'DRAFT' | 'SUBMITTED' | 'LATE' | 'EVALUATED';
   submittedAt: Timestamp | Date;
   content: string; // URL, text, or file reference
   score?: number;
@@ -100,14 +101,34 @@ export interface Submission {
   evaluatedAt?: Timestamp | Date;
 }
 
+export interface QuizQuestion {
+  id: string;
+  text: string;
+  type: 'MULTIPLE_CHOICE' | 'TEXT';
+  options?: string[];
+  correctAnswer?: string;
+  points: number;
+}
+
 export interface Quiz {
   id?: string;
   courseId: string;
   title: string;
   description: string;
+  questions: QuizQuestion[];
   timeLimitMinutes?: number;
   passingScore?: number;
   status: 'DRAFT' | 'PUBLISHED';
+}
+
+export interface QuizAttempt {
+  id?: string;
+  quizId: string;
+  memberId: string;
+  score: number;
+  attemptNo: number;
+  answers: Record<string, string>;
+  submittedAt: Timestamp | Date;
 }
 
 export interface GrowthMetrics {

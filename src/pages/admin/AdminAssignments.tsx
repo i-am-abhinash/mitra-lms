@@ -91,7 +91,7 @@ const AdminAssignments = () => {
                   <BookOpen size={14} /> {courses[a.courseId]?.title || 'Unknown Course'}
                 </div>
                 <div className='flex items-center gap-1 font-medium'>
-                  <Calendar size={14} /> {format((a.deadline.toDate ? a.deadline.toDate() : a.deadline), 'MMM d, yyyy')}
+                  <Calendar size={14} /> {format((('toDate' in (a.deadline as any)) ? (a.deadline as any).toDate() : a.deadline), 'MMM d, yyyy')}
                 </div>
               </div>
             </div>

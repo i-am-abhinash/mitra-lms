@@ -7,7 +7,7 @@ import clsx from 'clsx';
 interface Props {
   assignment: Assignment;
   course?: Course;
-  status?: 'PENDING' | 'SUBMITTED' | 'LATE' | 'EVALUATED';
+  status?: 'PENDING' | 'DRAFT' | 'SUBMITTED' | 'LATE' | 'EVALUATED';
   score?: number;
   onClick?: () => void;
 }
@@ -15,6 +15,7 @@ interface Props {
 export const AssignmentCard = ({ assignment, course, status, score, onClick }: Props) => {
   const getStatusColor = () => {
     switch(status) {
+      case 'DRAFT': return 'bg-yellow-500/10 text-yellow-500';
       case 'SUBMITTED': return 'bg-theme-present-bg text-theme-present';
       case 'LATE': return 'bg-theme-absent-bg text-theme-absent';
       case 'EVALUATED': return 'bg-theme-accent-light text-theme-accent';

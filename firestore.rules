@@ -79,17 +79,46 @@ service cloud.firestore {
 
     // Progress Collection
     match /progress/{progressId} {
-      // Members can read their own progress
-      // Leaders can read progress of anyone in their team
-      // Admins can read all progress
       allow read: if isAuthenticated() && (
         request.auth.uid == resource.data.memberId ||
         isAdmin() ||
         (isLeader() && getTeamId() == get(/databases/$(database)/documents/users/$(resource.data.memberId)).data.teamId)
       );
+      allow write: if isAuthenticated() && (
+        request.auth.uid == request.resource.data.memberId ||
+        isAdmin()
+      );
+    }
 
-      // Members can ONLY write their own progress
-      // Also allow Admin to manage progress if needed
+    // =========================================================================
+    // ASSIGNMENTS & QUIZZES (Phase 2)
+    // =========================================================================
+
+    match /assignments/{assignmentId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    match /quizzes/{quizId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    match /assignment_submissions/{submissionId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.memberId ||
+        isAdmin() ||
+        (isLeader() && getTeamId() == resource.data.teamId)
+      );
+      allow write: if isAuthenticated() && (
+        request.auth.uid == request.resource.data.memberId ||
+        isAdmin()
+      );
+    }
+    match /quiz_attempts/{attemptId} {
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.memberId ||
+        isAdmin() ||
+        (isLeader() && getTeamId() == get(/databases/$(database)/documents/users/$(resource.data.memberId)).data.teamId)
+      );
       allow write: if isAuthenticated() && (
         request.auth.uid == request.resource.data.memberId ||
         isAdmin()

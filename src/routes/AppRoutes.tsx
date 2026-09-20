@@ -40,6 +40,7 @@ import MemberProgress from '../pages/member/MemberProgress';
 import MemberGrowth from '../pages/member/MemberGrowth';
 import MemberSkills from '../pages/member/MemberSkills';
 import MemberQuizzes from '../pages/member/MemberQuizzes';
+import MemberQuizViewer from '../pages/member/MemberQuizViewer';
 
 // Auth Pages
 import Login from '../pages/auth/Login';
@@ -105,6 +106,7 @@ const AppRoutes = () => {
                   <Route path='growth' element={<MemberGrowth />} />
                   <Route path='skills' element={<MemberSkills />} />
                   <Route path='quizzes' element={<MemberQuizzes />} />
+                  <Route path='quizzes/:quizId' element={<MemberQuizViewer />} />
                 </Routes>
               </RouteGuard>
             } />
