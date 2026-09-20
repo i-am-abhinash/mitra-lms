@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc, query, where, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, addDoc, updateDoc, deleteDoc, query, where, orderBy } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Lesson } from '../types';
 
@@ -16,9 +16,17 @@ export const fetchLessonsByCourse = async (courseId: string): Promise<Lesson[]> 
   return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Lesson));
 };
 
-export const createLesson = async (lessonData: Omit<Lesson, 'id'>): Promise<Lesson> => {
-  const docRef = await addDoc(collection(db, COLLECTION), lessonData);
-  return { id: docRef.id, ...lessonData };
+export const getLesson = async (id: string): Promise<Lesson | null> => {
+  const docRef = doc(db, COLLECTION, id);
+  const snap = await getDoc(docRef);
+  if (snap.exists()) return { id: snap.id, ...snap.data() } as Lesson;
+  return null;
+};
+
+export const createLesson = async (lessonData: Omit<Lesson, 'id' | 'contentVersion'>): Promise<Lesson> => {
+  const newLesson = { ...lessonData, contentVersion: 1 };
+  const docRef = await addDoc(collection(db, COLLECTION), newLesson);
+  return { id: docRef.id, ...newLesson } as Lesson;
 };
 
 export const updateLesson = async (id: string, lessonData: Partial<Lesson>): Promise<void> => {

@@ -22,9 +22,10 @@ export const getCourse = async (id: string): Promise<Course | null> => {
   return null;
 };
 
-export const createCourse = async (courseData: Omit<Course, 'id' | 'createdAt' | 'updatedAt'>): Promise<Course> => {
+export const createCourse = async (courseData: Omit<Course, 'id' | 'createdAt' | 'updatedAt' | 'version'>): Promise<Course> => {
   const newCourse = {
     ...courseData,
+    version: 1,
     createdAt: Timestamp.now(),
     updatedAt: Timestamp.now()
   };

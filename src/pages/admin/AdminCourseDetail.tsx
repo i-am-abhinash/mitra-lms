@@ -57,19 +57,15 @@ const AdminCourseDetail = () => {
     loadCourseData();
   };
 
-  const handleAddLesson = async (data: Omit<Lesson, 'id'>) => {
+  const handleAddLesson = async (data: Omit<Lesson, 'id' | 'contentVersion'>) => {
     await createLesson(data);
     setActiveModuleIdForLesson(null);
     loadCourseData();
   };
 
-  const getLessonIcon = (type: string) => {
-    switch (type) {
-      case 'VIDEO': return <Video size={16} className='text-blue-500' />;
-      case 'READING': return <BookOpen size={16} className='text-green-500' />;
-      case 'RESOURCE': return <Link size={16} className='text-theme-accent' />;
-      default: return <BookOpen size={16} />;
-    }
+  const getLessonIcon = (lesson: Lesson) => {
+    if (lesson.videoUrl) return <Video size={16} className='text-blue-500' />;
+    return <BookOpen size={16} className='text-green-500' />;
   };
 
   if (loading) return <div className='flex justify-center p-12'><div className='animate-pulse text-theme-accent'>Loading...</div></div>;
@@ -135,11 +131,11 @@ const AdminCourseDetail = () => {
                     {moduleLessons.map(lesson => (
                       <div key={lesson.id} className='flex items-center gap-3 p-3 bg-theme-bg rounded-md border border-theme-border-subtle'>
                         <div className='p-1.5 bg-theme-surface-higher rounded-md'>
-                          {getLessonIcon(lesson.type)}
+                          {getLessonIcon(lesson)}
                         </div>
                         <div className='flex-1'>
                           <h4 className='text-sm font-medium text-theme-text'>{lesson.title}</h4>
-                          <p className='text-xs text-theme-text-secondary'>{lesson.type}</p>
+                          <p className='text-xs text-theme-text-secondary'>{lesson.videoUrl ? 'Video' : 'Reading'}</p>
                         </div>
                       </div>
                     ))}

@@ -23,7 +23,12 @@ export interface Course {
   id?: string;
   title: string;
   description: string;
+  thumbnailUrl?: string;
+  category?: string;
+  difficulty?: 'Beginner' | 'Intermediate' | 'Advanced';
+  estimatedDurationMins?: number;
   status: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
+  version: number;
   createdAt: Timestamp | Date;
   createdBy: string;
 }
@@ -42,8 +47,28 @@ export interface Lesson {
   courseId: string;
   title: string;
   content: string; // Markdown or HTML
-  videoUrl?: string;
+  videoUrl?: string; // Optional external video link
+  contentVersion: number;
   order: number;
+}
+
+export interface Resource {
+  id?: string;
+  lessonId?: string;
+  courseId?: string;
+  title: string;
+  sourceType: 'URL' | 'STORAGE';
+  url: string;
+}
+
+export interface Progress {
+  id?: string;
+  memberId: string;
+  courseId: string;
+  lessonId: string;
+  contentVersion: number;
+  status: 'COMPLETED';
+  completedAt: Timestamp | Date;
 }
 
 export interface Assignment {

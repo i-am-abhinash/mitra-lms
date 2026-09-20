@@ -56,6 +56,47 @@ service cloud.firestore {
     }
     
     // =========================================================================
+    // LEARNING CORE (Phase 1)
+    // =========================================================================
+
+    // Courses, Modules, Lessons, Resources
+    match /courses/{courseId} {
+      allow read: if isAuthenticated(); // For V1, any member can see published/draft courses but UI filters drafts
+      allow write: if isAdmin();
+    }
+    match /modules/{moduleId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    match /lessons/{lessonId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+    match /resources/{resourceId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Progress Collection
+    match /progress/{progressId} {
+      // Members can read their own progress
+      // Leaders can read progress of anyone in their team
+      // Admins can read all progress
+      allow read: if isAuthenticated() && (
+        request.auth.uid == resource.data.memberId ||
+        isAdmin() ||
+        (isLeader() && getTeamId() == get(/databases/$(database)/documents/users/$(resource.data.memberId)).data.teamId)
+      );
+
+      // Members can ONLY write their own progress
+      // Also allow Admin to manage progress if needed
+      allow write: if isAuthenticated() && (
+        request.auth.uid == request.resource.data.memberId ||
+        isAdmin()
+      );
+    }
+
+    // =========================================================================
     // DEFAULT DENY
     // =========================================================================
     match /{document=**} {

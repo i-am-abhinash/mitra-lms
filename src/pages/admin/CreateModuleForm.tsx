@@ -27,7 +27,7 @@ export const CreateModuleForm = ({ courseId, orderIndex, onSubmit, onCancel }: P
     await onSubmit({
       ...data,
       courseId,
-      orderIndex
+      order: orderIndex
     });
   };
 

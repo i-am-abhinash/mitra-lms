@@ -1,12 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CourseCard } from '../../components/lms/CourseCard';
-import { mockCourses } from '../../mockData';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen } from 'lucide-react';
 import { EmptyState } from '../../components/lms/EmptyState';
+import { fetchCourses } from '../../services/courseService';
+import { getMemberProgress } from '../../services/progressService';
+import { fetchLessonsByCourse } from '../../services/lessonService';
+import { useAuth } from '../../context/AuthContext';
+import type { Course } from '../../types';
 
 const MemberLearning = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [courses, setCourses] = useState<(Course & { progressPct: number })[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      loadCourses();
+    }
+  }, [user]);
+
+  const loadCourses = async () => {
+    setLoading(true);
+    try {
+      const publishedCourses = await fetchCourses('PUBLISHED');
+      
+      const enrichedCourses = await Promise.all(publishedCourses.map(async (course) => {
+        const [lessons, progress] = await Promise.all([
+          fetchLessonsByCourse(course.id!),
+          getMemberProgress(user!.id!, course.id!)
+        ]);
+        
+        const completedCount = new Set(progress.map(p => p.lessonId)).size;
+        const progressPct = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
+        
+        return { ...course, progressPct };
+      }));
+      
+      setCourses(enrichedCourses);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div className='p-12 text-center text-theme-accent animate-pulse'>Loading courses...</div>;
+  }
 
   return (
     <div className='max-w-7xl mx-auto'>
@@ -15,7 +57,7 @@ const MemberLearning = () => {
         <p className='text-theme-text-secondary mt-1'>Continue your registered courses</p>
       </div>
 
-      {mockCourses.length === 0 ? (
+      {courses.length === 0 ? (
         <EmptyState 
           icon={<BookOpen size={48} />} 
           title='No courses yet' 
@@ -23,11 +65,11 @@ const MemberLearning = () => {
         />
       ) : (
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {mockCourses.map(course => (
+          {courses.map(course => (
             <CourseCard 
               key={course.id} 
               course={course} 
-              progress={Math.floor(Math.random() * 100)} 
+              progress={course.progressPct} 
               onClick={() => navigate(`/member/learning/course/${course.id}`)} 
             />
           ))}

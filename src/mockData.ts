@@ -13,9 +13,9 @@ export const mockTeams: Team[] = [
 ];
 
 export const mockCourses: Course[] = [
-  { id: 'c1', title: 'Python for AI', description: 'Core Python concepts for ML.', status: 'PUBLISHED', createdBy: 'admin1', createdAt: new Date() },
-  { id: 'c2', title: 'Machine Learning Fundamentals', description: 'Intro to sklearn and classic algorithms.', status: 'PUBLISHED', createdBy: 'admin1', createdAt: new Date() },
-  { id: 'c3', title: 'Deep Learning', description: 'Neural networks with PyTorch.', status: 'DRAFT', createdBy: 'admin1', createdAt: new Date() }
+  { id: 'c1', title: 'Python for AI', description: 'Core Python concepts for ML.', status: 'PUBLISHED', version: 1, createdBy: 'admin1', createdAt: new Date() },
+  { id: 'c2', title: 'Machine Learning Fundamentals', description: 'Intro to sklearn and classic algorithms.', status: 'PUBLISHED', version: 1, createdBy: 'admin1', createdAt: new Date() },
+  { id: 'c3', title: 'Deep Learning', description: 'Neural networks with PyTorch.', status: 'DRAFT', version: 1, createdBy: 'admin1', createdAt: new Date() }
 ];
 
 export const mockModules: Module[] = [
@@ -24,8 +24,8 @@ export const mockModules: Module[] = [
 ];
 
 export const mockLessons: Lesson[] = [
-  { id: 'l1', courseId: 'c1', moduleId: 'm1', title: 'Introduction to Python', content: 'Python is a high-level language...', order: 1 },
-  { id: 'l2', courseId: 'c1', moduleId: 'm1', title: 'Data Types', content: 'Strings, ints, floats...', order: 2 }
+  { id: 'l1', courseId: 'c1', moduleId: 'm1', title: 'Introduction to Python', content: 'Python is a high-level language...', contentVersion: 1, order: 1 },
+  { id: 'l2', courseId: 'c1', moduleId: 'm1', title: 'Data Types', content: 'Strings, ints, floats...', contentVersion: 1, order: 2 }
 ];
 
 export const mockAssignments: Assignment[] = [
