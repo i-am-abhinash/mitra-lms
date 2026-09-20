@@ -5,12 +5,13 @@ import type { Course } from '../types';
 const COLLECTION = 'courses';
 
 export const fetchCourses = async (status?: string): Promise<Course[]> => {
-  let q = collection(db, COLLECTION);
+  let snapshot;
   if (status) {
-    q = query(q, where('status', '==', status));
+    snapshot = await getDocs(query(collection(db, COLLECTION), where('status', '==', status)));
+  } else {
+    snapshot = await getDocs(collection(db, COLLECTION));
   }
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Course));
+  return snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Course));
 };
 
 export const getCourse = async (id: string): Promise<Course | null> => {

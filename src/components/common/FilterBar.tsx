@@ -1,12 +1,22 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { fetchTeams } from '../../services/teamService';
 import { Calendar, Users, Filter, RotateCcw, Activity } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Dropdown from './Dropdown';
 
-const FilterBar = ({ filters, setFilters, availableTeams = [] }) => {
+export interface Filters {
+  timePeriod: string;
+  teamId: string;
+  status: string;
+}
+
+const FilterBar = ({ filters, setFilters, availableTeams = [] }: {
+  filters: Filters;
+  setFilters: (filters: Filters) => void;
+  availableTeams?: any[];
+}) => {
   const { isAdmin } = useAuth();
-  const [teams, setTeams] = useState(availableTeams);
+  const [teams, setTeams] = useState<any[]>(availableTeams);
 
   useEffect(() => {
     if (isAdmin && availableTeams.length === 0) {

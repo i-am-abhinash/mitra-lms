@@ -1,10 +1,16 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 import clsx from 'clsx';
 
-const Dropdown = ({ options, value, onChange, icon: Icon, placeholder = "Select option" }) => {
+const Dropdown = ({ options, value, onChange, icon: Icon, placeholder = 'Select option' }: {
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (v: string) => void;
+  icon?: React.ElementType;
+  placeholder?: string;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close when clicking outside
   useEffect(() => {

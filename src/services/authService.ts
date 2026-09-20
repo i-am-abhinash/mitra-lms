@@ -90,7 +90,7 @@ export const changeUserPassword = async (currentPassword, newPassword) => {
   if (!user) throw new Error("No user is signed in.");
   
   // Re-authenticate
-  const credential = EmailAuthProvider.credential(user.email, currentPassword);
+  const credential = EmailAuthProvider.credential(user.email!, currentPassword);
   await reauthenticateWithCredential(user, credential);
   
   // Update password

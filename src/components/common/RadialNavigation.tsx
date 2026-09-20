@@ -13,7 +13,7 @@ const RadialNavigation = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -136,7 +136,7 @@ const RadialNavigation = () => {
                 ? 'w-16 h-16 border-theme-accent text-theme-accent' 
                 : 'w-12 h-12 border-theme-border-subtle text-theme-text-secondary hover:text-theme-primary'
             )}
-            onClick={() => setIsMobile(true) && setIsOpen(!isOpen)}
+            onClick={() => { setIsMobile(true); setIsOpen(!isOpen); }}
           >
             <div className='font-bold tracking-widest text-[10px]'>MITRA</div>
           </button>

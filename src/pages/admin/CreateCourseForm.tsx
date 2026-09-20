@@ -17,7 +17,7 @@ const courseSchema = z.object({
 type CourseFormData = z.infer<typeof courseSchema>;
 
 interface Props {
-  onSubmit: (data: Omit<Course, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  onSubmit: (data: Omit<Course, 'id' | 'createdAt' | 'updatedAt' | 'version'>) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -35,7 +35,7 @@ export const CreateCourseForm = ({ onSubmit, onCancel }: Props) => {
   const submitHandler = async (data: CourseFormData) => {
     await onSubmit({
       ...data,
-      thumbnailUrl: null,
+      thumbnailUrl: undefined,
       createdBy: user?.id || 'unknown'
     });
   };
