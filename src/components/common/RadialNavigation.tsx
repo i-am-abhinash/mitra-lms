@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
-  Home, Users, Settings, LogOut,
+  Home, Users, Settings, ShieldAlert, LogOut,
   BookOpen, FileText, CheckCircle, TrendingUp, Activity, Award, Bell, List, HelpCircle, ListTodo
 } from 'lucide-react';
 import clsx from 'clsx';
@@ -54,7 +54,8 @@ const RadialNavigation = () => {
       { to: '/admin/rubrics', icon: CheckCircle, label: 'Rubrics' },
       { to: '/admin/growth', icon: TrendingUp, label: 'Growth' },
       { to: '/admin/members', icon: Users, label: 'Members' },
-      { to: '/admin/teams', icon: Users, label: 'Teams' }
+      { to: '/admin/teams', icon: Users, label: 'Teams' },
+        { to: '/admin/audit-logs', icon: ShieldAlert, label: 'Audit Logs' }
     ];
   } else if (isLeader) {
     navItems = [

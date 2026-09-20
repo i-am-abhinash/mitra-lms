@@ -3,6 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 import { fetchTeamProjectSubmissions, updateSubmissionStatus } from '../../services/submissionService';
 import { fetchRubrics, createEvaluation } from '../../services/evaluationService';
 import { fetchTeamProjects } from '../../services/teamWorkService';
+import { logAction } from '../../services/auditService';
+import { createNotification } from '../../services/notificationService';
 import type { ProjectSubmission, Rubric, Evaluation, Project } from '../../types';
 import { Timestamp } from 'firebase/firestore';
 
@@ -91,6 +93,18 @@ const LeaderEvaluations = () => {
         evaluatedAt: Timestamp.now()
       });
       await updateSubmissionStatus(evaluatingSub.id!, newStatus);
+
+      // FR-AUD-01: Audit log the evaluation
+      await logAction(user.id!, 'EVALUATED_PROJECT', evaluatingSub.id!, `Score: ${total}, Passed: ${passed}`);
+      
+      // FR-NOT-01: Notify the member
+      await createNotification({
+        recipientId: evaluatingSub.memberId,
+        type: passed ? 'SUCCESS' : 'WARNING',
+        title: `Project ${passed ? 'Accepted' : 'Changes Requested'}`,
+        message: `Your project submission has been evaluated. Score: ${total}/100.`,
+      });
+
       await loadData();
       setEvaluatingSub(null);
     } catch (err) {

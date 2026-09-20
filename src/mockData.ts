@@ -37,9 +37,9 @@ export const mockSubmissions: Submission[] = [
 ];
 
 export const mockQuizzes: Quiz[] = [
-  { id: 'q1', courseId: 'c1', title: 'Python Syntax Quiz', description: 'Test your knowledge on basic Python syntax.', timeLimitMinutes: 15, passingScore: 70, status: 'PUBLISHED' }
+  { id: 'q1', courseId: 'c1', title: 'Python Syntax Quiz', description: 'Test your knowledge on basic Python syntax.', timeLimitMinutes: 15, passingScore: 70, status: 'PUBLISHED', questions: [] }
 ];
 
 export const mockGrowth: GrowthMetrics[] = [
-  { userId: 'member1', overallGrowth: 78, courseCompletion: 65, assignmentPerformance: 85, attendanceConsistency: 90, skills: { 'Python': 80, 'Pandas': 60 }, lastUpdated: new Date() }
+  { userId: 'member1', overallGrowth: 78, courseCompletion: 65, assignmentScores: 85, participationRate: 90, attendanceConsistency: 90, skills: { 'Python': 80, 'Pandas': 60 }, evidenceRefs: [], lastUpdated: new Date() }
 ];

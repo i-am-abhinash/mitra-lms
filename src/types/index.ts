@@ -262,3 +262,23 @@ export interface GrowthMetrics {
   skills: Record<string, number>; // e.g., { 'Python': 80, 'Machine Learning': 60 }
   lastUpdated: Timestamp | Date;
 }
+
+export interface Notification {
+  id?: string;
+  recipientId: string;
+  type: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR';
+  title: string;
+  message: string;
+  link?: string;
+  readAt?: Timestamp | Date;
+  createdAt: Timestamp | Date;
+}
+
+export interface AuditLog {
+  id?: string;
+  actorId: string;
+  action: string;
+  targetId?: string;
+  details?: string;
+  timestamp: Timestamp | Date;
+}

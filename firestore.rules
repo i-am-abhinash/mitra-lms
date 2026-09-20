@@ -211,6 +211,25 @@ service cloud.firestore {
     }
 
     // =========================================================================
+    // NOTIFICATIONS & AUDIT (Phase 6)
+    // =========================================================================
+
+    match /notifications/{notifId} {
+      // Member can read and update (mark read) their own notifications
+      allow read, update: if isAuthenticated() && request.auth.uid == resource.data.recipientId;
+      // System/Admin/Leaders can create them
+      allow create: if isAuthenticated();
+      allow delete: if false; // Only soft-delete (mark read)
+    }
+
+    match /audit_logs/{logId} {
+      allow read: if isAdmin();
+      // Append only! No update or delete allowed by ANY user.
+      allow create: if isAuthenticated();
+      allow update, delete: if false;
+    }
+
+    // =========================================================================
     // DEFAULT DENY
     // =========================================================================
     match /{document=**} {

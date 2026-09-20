@@ -1,6 +1,7 @@
 import React from 'react';
 import RadialNavigation from './RadialNavigation';
-import { Search, Bell } from 'lucide-react';
+import { Search } from 'lucide-react';
+import NotificationsPopover from './NotificationsPopover';
 import { useAuth } from '../../context/AuthContext';
 
 const Layout = ({ children, title, description }) => {
@@ -72,10 +73,8 @@ const Layout = ({ children, title, description }) => {
             {today}
           </div>
           
-          <button className="text-theme-muted hover:text-theme-primary transition-colors relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-theme-cyan rounded-full border-2 border-[#0A101A]"></span>
-          </button>
+          <NotificationsPopover />
+          
           
           <div className="h-8 w-px bg-theme-border hidden sm:block"></div>
           

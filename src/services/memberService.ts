@@ -14,19 +14,21 @@ const secondaryApp = initializeApp({
 
 const secondaryAuth = getAuth(secondaryApp);
 
-export const fetchMembers = async (teamId?: string) => {
-  let q = collection(db, 'users');
+export const fetchMembers = async (teamId?: string): Promise<Array<{id: string; [key: string]: any}>> => {
+  let snapshot;
   if (teamId !== undefined) {
-    q = query(q, where("teamId", "==", teamId));
+    const q = query(collection(db, 'users'), where('teamId', '==', teamId));
+    snapshot = await getDocs(q);
+  } else {
+    snapshot = await getDocs(collection(db, 'users'));
   }
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
 };
 
 export const fetchExternalMembers = async () => {
-  const q = query(collection(db, 'users'), where("teamId", "==", null));
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(u => u.role === 'Member');
+  const snapshot = await getDocs(collection(db, 'users'));
+  const allUsers = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as any));
+  return allUsers.filter((u: any) => u.role === 'Member' && !u.teamId);
 };
 
 export const createMember = async (memberData) => {

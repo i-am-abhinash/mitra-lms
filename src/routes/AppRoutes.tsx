@@ -15,6 +15,7 @@ import AdminAssignments from '../pages/admin/AdminAssignments';
 import AdminSubmissions from '../pages/admin/AdminSubmissions';
 import AdminMembersList from '../pages/admin/AdminMembersList';
 import AdminTeamsList from '../pages/admin/AdminTeamsList';
+import AdminTeamDetail from '../pages/admin/AdminTeamDetail';
 import AdminProgress from '../pages/admin/AdminProgress';
 import AdminGrowth from '../pages/admin/AdminGrowth';
 import AdminSkills from '../pages/admin/AdminSkills';
@@ -74,6 +75,7 @@ const AppRoutes = () => {
                   <Route path='submissions' element={<AdminSubmissions />} />
                   <Route path='members' element={<AdminMembersList />} />
                   <Route path='teams' element={<AdminTeamsList />} />
+                  <Route path='teams/:teamId' element={<AdminTeamDetail />} />
                   <Route path='progress' element={<AdminProgress />} />
                   <Route path='growth' element={<AdminGrowth />} />
                   <Route path='skills' element={<AdminSkills />} />
