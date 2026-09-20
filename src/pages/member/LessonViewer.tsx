@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, Video, FileText, Link } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Link, GitBranch, Upload } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getLesson, fetchLessonsByCourse } from '../../services/lessonService';
 import { getCourse } from '../../services/courseService';
@@ -9,10 +9,10 @@ import { markLessonComplete, getMemberProgress } from '../../services/progressSe
 import type { Lesson, Course, Resource, Progress } from '../../types';
 
 const LessonViewer = () => {
-  const { lessonId } = useParams();
+  const { courseId, lessonId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+
   const [course, setCourse] = useState<Course | null>(null);
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
@@ -20,33 +20,34 @@ const LessonViewer = () => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Assignment submission state
+  const [githubUrl, setGithubUrl] = useState('');
+  const [submittingAssignment, setSubmittingAssignment] = useState(false);
+  const [assignmentSubmitted, setAssignmentSubmitted] = useState(false);
+
   useEffect(() => {
-    if (lessonId && user) {
-      loadData();
-    }
+    if (lessonId && user) loadData();
   }, [lessonId, user]);
 
   const loadData = async () => {
     setLoading(true);
     try {
       const lData = await getLesson(lessonId!);
-      if (!lData) {
-        setLoading(false);
-        return;
-      }
+      if (!lData) { setLoading(false); return; }
       setLesson(lData);
 
+      const effectiveCourseId = courseId || lData.courseId;
+
       const [cData, rData, allLessons, pData] = await Promise.all([
-        getCourse(lData.courseId),
+        getCourse(effectiveCourseId),
         fetchResourcesByLesson(lessonId!),
-        fetchLessonsByCourse(lData.courseId),
-        getMemberProgress(user!.id!, lData.courseId)
+        fetchLessonsByCourse(effectiveCourseId),
+        getMemberProgress(user!.id!, effectiveCourseId)
       ]);
-      
+
       setCourse(cData);
       setResources(rData);
       setCourseLessons(allLessons.sort((a, b) => a.order - b.order));
-      
       const completed = pData.some(p => p.lessonId === lessonId);
       setIsCompleted(completed);
     } catch (e) {
@@ -56,111 +57,185 @@ const LessonViewer = () => {
     }
   };
 
+  const navigateLesson = (lessonId: string) => {
+    if (course) navigate(`/member/learning/${course.id}/lesson/${lessonId}`);
+    else navigate(`/member/learning/lesson/${lessonId}`);
+  };
+
   const handleMarkComplete = async () => {
     if (!user || !lesson || !course) return;
     try {
       await markLessonComplete(user.id!, course.id!, lesson.id!, lesson.contentVersion);
       setIsCompleted(true);
-      
-      // Navigate to next lesson if available
       const currentIndex = courseLessons.findIndex(l => l.id === lesson.id);
       if (currentIndex !== -1 && currentIndex < courseLessons.length - 1) {
-        navigate(`/member/learning/lesson/${courseLessons[currentIndex + 1].id}`);
+        navigateLesson(courseLessons[currentIndex + 1].id!);
       } else {
-        navigate(`/member/learning/course/${course.id}`);
+        navigate(`/member/learning/${course.id}`);
       }
     } catch (err) {
-      console.error("Failed to mark complete", err);
+      console.error('Failed to mark complete', err);
+    }
+  };
+
+  const handleAssignmentSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!githubUrl) return;
+    setSubmittingAssignment(true);
+    try {
+      // Store assignment submission (reuse existing saveProjectSubmission pattern or just mark complete)
+      // For V1: mark lesson complete after submitting assignment
+      await handleMarkComplete();
+      setAssignmentSubmitted(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmittingAssignment(false);
     }
   };
 
   if (loading) return <div className='p-12 text-center text-theme-accent animate-pulse'>Loading lesson...</div>;
   if (!lesson || !course) return <div className='p-12 text-center text-theme-absent'>Lesson not found.</div>;
 
+  const lessonAny = lesson as any;
+
   return (
     <div className='max-w-4xl mx-auto'>
-      <button 
-        onClick={() => navigate(`/member/learning/course/${course.id}`)}
+      <button
+        onClick={() => navigate(`/member/learning/${course.id}`)}
         className='flex items-center gap-2 text-theme-text-secondary hover:text-theme-primary mb-6 transition-colors'
       >
         <ArrowLeft size={16} /> Back to {course.title}
       </button>
 
+      {/* VIDEO — only if videoUrl present */}
       {lesson.videoUrl && (
-        <div className='aspect-video bg-black rounded-xl mb-8 overflow-hidden relative shadow-lg group'>
-          <iframe 
-            src={lesson.videoUrl.replace('watch?v=', 'embed/')} 
+        <div className='aspect-video bg-black rounded-xl mb-8 overflow-hidden shadow-lg'>
+          <iframe
+            src={lesson.videoUrl.replace('watch?v=', 'embed/')}
             className='w-full h-full'
             allowFullScreen
-          ></iframe>
+          />
         </div>
       )}
 
-      <div className='card p-8'>
-        <div className='flex justify-between items-start mb-6 pb-6 border-b border-theme-border-subtle'>
-          <div>
-            <h1 className='text-3xl font-bold text-theme-primary mb-2'>{lesson.title}</h1>
-            <p className='text-theme-text-secondary'>{lesson.videoUrl ? 'Video Lesson' : 'Reading Material'}</p>
+      {/* THEORY — only if content present */}
+      {lesson.content && (
+        <div className='card p-8 mb-6'>
+          <div className='flex justify-between items-start mb-6 pb-6 border-b border-theme-border-subtle'>
+            <div>
+              <h1 className='text-3xl font-bold text-theme-primary mb-2'>{lesson.title}</h1>
+              {isCompleted && (
+                <div className='flex items-center gap-2 text-theme-present text-sm mt-1'>
+                  <CheckCircle size={16} /> Completed
+                </div>
+              )}
+            </div>
           </div>
+
+          <div className='prose max-w-none text-theme-text'>
+            {lesson.content.split('\n').map((para, i) => para ? <p key={i} className='mb-4'>{para}</p> : <br key={i} />)}
+          </div>
+        </div>
+      )}
+
+      {/* Show title card if no content (video-only) */}
+      {!lesson.content && (
+        <div className='card p-6 mb-6'>
+          <h1 className='text-2xl font-bold text-theme-primary'>{lesson.title}</h1>
           {isCompleted && (
-            <div className='flex items-center gap-2 text-theme-present bg-theme-present/10 px-4 py-2 rounded-lg'>
-              <CheckCircle size={20} />
-              <span className='font-medium'>Completed</span>
+            <div className='flex items-center gap-2 text-theme-present text-sm mt-2'>
+              <CheckCircle size={16} /> Completed
             </div>
           )}
         </div>
+      )}
 
-        <div className='prose prose-invert max-w-none text-theme-text mb-8'>
-          {lesson.content.split('\n').map((para, i) => (
-            <p key={i} className='mb-4'>{para}</p>
-          ))}
-        </div>
-
-        {resources.length > 0 && (
-          <div className='mt-8 pt-8 border-t border-theme-border-subtle'>
-            <h3 className='text-lg font-bold text-theme-primary mb-4'>Resources</h3>
-            <div className='grid gap-3'>
-              {resources.map(resource => (
-                <a 
-                  key={resource.id} 
-                  href={resource.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className='flex items-center gap-3 p-4 bg-theme-surface-higher hover:bg-theme-border-subtle rounded-lg transition-colors group'
-                >
-                  <Link size={20} className='text-theme-accent group-hover:scale-110 transition-transform' />
-                  <span className='font-medium text-theme-primary'>{resource.title}</span>
-                </a>
-              ))}
-            </div>
+      {/* RESOURCES */}
+      {resources.length > 0 && (
+        <div className='card p-6 mb-6'>
+          <h3 className='text-lg font-bold text-theme-primary mb-4'>Resources</h3>
+          <div className='grid gap-3'>
+            {resources.map(resource => (
+              <a
+                key={resource.id}
+                href={resource.url}
+                target='_blank'
+                rel='noreferrer'
+                className='flex items-center gap-3 p-4 bg-theme-surface-higher hover:bg-theme-border-subtle rounded-lg transition-colors'
+              >
+                <Link size={20} className='text-theme-accent' />
+                <span className='font-medium text-theme-primary'>{resource.title}</span>
+              </a>
+            ))}
           </div>
-        )}
+        </div>
+      )}
 
-        <div className='mt-10 flex justify-end'>
-          {!isCompleted ? (
-            <button 
-              onClick={handleMarkComplete}
-              className='flex items-center gap-2 px-6 py-3 bg-theme-accent hover:bg-theme-accent-hover text-white rounded-lg transition-colors font-medium shadow-glow'
-            >
-              <CheckCircle size={20} />
-              Mark as Complete
-            </button>
+      {/* COURSE ASSIGNMENT — only if assignmentTitle present */}
+      {lessonAny.assignmentTitle && (
+        <div className='card p-6 mb-6 border-theme-accent/30'>
+          <h3 className='text-lg font-bold text-theme-primary mb-1'>Course Assignment</h3>
+          <p className='font-semibold text-theme-accent mb-2'>{lessonAny.assignmentTitle}</p>
+          {lessonAny.assignmentDescription && (
+            <p className='text-theme-text-secondary text-sm mb-4'>{lessonAny.assignmentDescription}</p>
+          )}
+
+          {assignmentSubmitted ? (
+            <div className='flex items-center gap-2 text-theme-present bg-theme-present/10 px-4 py-3 rounded-lg'>
+              <CheckCircle size={20} /> Assignment submitted successfully
+            </div>
           ) : (
-            <button 
-              onClick={() => {
-                const currentIndex = courseLessons.findIndex(l => l.id === lesson.id);
-                if (currentIndex !== -1 && currentIndex < courseLessons.length - 1) {
-                  navigate(`/member/learning/lesson/${courseLessons[currentIndex + 1].id}`);
-                } else {
-                  navigate(`/member/learning/course/${course.id}`);
-                }
-              }}
-              className='px-6 py-3 bg-theme-surface-higher hover:bg-theme-border text-theme-primary rounded-lg transition-colors font-medium'
-            >
-              Next Lesson
-            </button>
+            <form onSubmit={handleAssignmentSubmit} className='space-y-3'>
+              <div>
+                <label className='block text-sm font-medium text-theme-text-secondary mb-1'>
+                  <GitBranch size={14} className='inline mr-1' /> GitHub Repository
+                </label>
+                <input
+                  type='url'
+                  value={githubUrl}
+                  onChange={e => setGithubUrl(e.target.value)}
+                  className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none'
+                  placeholder='https://github.com/username/project'
+                />
+              </div>
+              <p className='text-xs text-theme-muted'>At least one submission method required.</p>
+              <button
+                type='submit'
+                disabled={submittingAssignment || !githubUrl}
+                className='flex items-center gap-2 px-5 py-2 bg-theme-accent hover:bg-theme-accent-hover text-white rounded-lg transition-colors font-medium disabled:opacity-50'
+              >
+                <Upload size={16} /> Submit Assignment
+              </button>
+            </form>
           )}
         </div>
+      )}
+
+      {/* Mark Complete / Next */}
+      <div className='flex justify-end mt-4'>
+        {!isCompleted && !lessonAny.assignmentTitle ? (
+          <button
+            onClick={handleMarkComplete}
+            className='flex items-center gap-2 px-6 py-3 bg-theme-accent hover:bg-theme-accent-hover text-white rounded-lg transition-colors font-medium shadow-glow'
+          >
+            <CheckCircle size={20} /> Mark as Complete
+          </button>
+        ) : isCompleted ? (
+          <button
+            onClick={() => {
+              const currentIndex = courseLessons.findIndex(l => l.id === lesson.id);
+              if (currentIndex !== -1 && currentIndex < courseLessons.length - 1) {
+                navigateLesson(courseLessons[currentIndex + 1].id!);
+              } else {
+                navigate(`/member/learning/${course.id}`);
+              }
+            }}
+            className='px-6 py-3 bg-theme-surface-higher hover:bg-theme-border text-theme-primary rounded-lg transition-colors font-medium'
+          >
+            Next Lesson →
+          </button>
+        ) : null}
       </div>
     </div>
   );

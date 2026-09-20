@@ -4,10 +4,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import type { Lesson } from '../../types';
 
+// All sections are optional
 const lessonSchema = z.object({
-  title: z.string().min(3, 'Title is required'),
-  content: z.string().min(5, 'Content is required'),
-  videoUrl: z.string().url('Must be a valid URL').optional().or(z.literal(''))
+  title: z.string().min(3, 'Module title is required'),
+  videoUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  content: z.string().optional().or(z.literal('')),
+  // Course assignment title (optional)
+  assignmentTitle: z.string().optional().or(z.literal('')),
+  assignmentDescription: z.string().optional().or(z.literal(''))
 });
 
 type LessonFormData = z.infer<typeof lessonSchema>;
@@ -28,34 +32,47 @@ export const CreateLessonForm = ({ courseId, moduleId, orderIndex, onSubmit, onC
   const submitHandler = async (data: LessonFormData) => {
     await onSubmit({
       title: data.title,
-      content: data.content,
+      content: data.content || '',
       courseId,
       moduleId,
       order: orderIndex,
-      videoUrl: data.videoUrl || undefined
-    });
+      videoUrl: data.videoUrl || undefined,
+      // Store assignment info inside the lesson if provided
+      assignmentTitle: data.assignmentTitle || undefined,
+      assignmentDescription: data.assignmentDescription || undefined,
+    } as any);
   };
 
   return (
-    <form onSubmit={handleSubmit(submitHandler)} className='space-y-4'>
+    <form onSubmit={handleSubmit(submitHandler)} className='space-y-6'>
       <div>
-        <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Lesson Title</label>
-        <input {...register('title')} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors' />
+        <label className='block text-sm font-semibold text-theme-text mb-1'>Module Title</label>
+        <input {...register('title')} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors' placeholder='e.g. PyTorch Basics' />
         {errors.title && <p className='text-theme-absent text-xs mt-1'>{errors.title.message}</p>}
       </div>
-      <div>
-        <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Video URL (Optional, YouTube/Vimeo)</label>
-        <input {...register('videoUrl')} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors' placeholder="https://youtube.com/..." />
+
+      <div className='border-t border-theme-border-subtle pt-4'>
+        <p className='text-xs font-bold uppercase tracking-widest text-theme-muted mb-3'>VIDEO <span className='font-normal normal-case tracking-normal text-theme-muted ml-1'>— Optional</span></p>
+        <input {...register('videoUrl')} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors' placeholder='https://youtube.com/watch?v=...' />
         {errors.videoUrl && <p className='text-theme-absent text-xs mt-1'>{errors.videoUrl.message}</p>}
       </div>
-      <div>
-        <label className='block text-sm font-medium text-theme-text-secondary mb-1'>Content / Summary</label>
-        <textarea {...register('content')} rows={4} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors' placeholder="Markdown supported..."></textarea>
-        {errors.content && <p className='text-theme-absent text-xs mt-1'>{errors.content.message}</p>}
+
+      <div className='border-t border-theme-border-subtle pt-4'>
+        <p className='text-xs font-bold uppercase tracking-widest text-theme-muted mb-3'>THEORY <span className='font-normal normal-case tracking-normal text-theme-muted ml-1'>— Optional</span></p>
+        <textarea {...register('content')} rows={5} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors' placeholder='Educational content, concepts, explanations...' />
       </div>
-      <div className='flex justify-end gap-3 mt-6 pt-4 border-t border-theme-border-subtle'>
+
+      <div className='border-t border-theme-border-subtle pt-4'>
+        <p className='text-xs font-bold uppercase tracking-widest text-theme-muted mb-3'>COURSE ASSIGNMENT <span className='font-normal normal-case tracking-normal text-theme-muted ml-1'>— Optional</span></p>
+        <input {...register('assignmentTitle')} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors mb-2' placeholder='Assignment title, e.g. Build an ANN Model' />
+        <textarea {...register('assignmentDescription')} rows={3} className='w-full bg-theme-surface-higher border border-theme-border rounded-lg p-2.5 text-theme-text focus:border-theme-accent outline-none transition-colors' placeholder='Describe what the member must build or do...' />
+      </div>
+
+      <div className='flex justify-end gap-3 pt-4 border-t border-theme-border-subtle'>
         <button type='button' onClick={onCancel} className='px-4 py-2 rounded-lg text-theme-text-secondary hover:bg-theme-surface-higher transition-colors'>Cancel</button>
-        <button type='submit' disabled={isSubmitting} className='px-4 py-2 rounded-lg bg-theme-accent hover:bg-theme-accent-hover text-white transition-colors shadow-glow disabled:opacity-50'>{isSubmitting ? 'Saving...' : 'Add Lesson'}</button>
+        <button type='submit' disabled={isSubmitting} className='px-4 py-2 rounded-lg bg-theme-accent hover:bg-theme-accent-hover text-white transition-colors shadow-glow disabled:opacity-50'>
+          {isSubmitting ? 'Saving...' : 'Save Module'}
+        </button>
       </div>
     </form>
   );

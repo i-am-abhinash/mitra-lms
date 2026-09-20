@@ -12,6 +12,7 @@ import AdminDashboard from '../pages/admin/AdminDashboard';
 import AdminCourses from '../pages/admin/AdminCourses';
 import AdminCourseDetail from '../pages/admin/AdminCourseDetail';
 import AdminAssignments from '../pages/admin/AdminAssignments';
+import AdminAssessmentsHub from '../pages/admin/AdminAssessmentsHub';
 import AdminSubmissions from '../pages/admin/AdminSubmissions';
 import AdminMembersList from '../pages/admin/AdminMembersList';
 import AdminTeamsList from '../pages/admin/AdminTeamsList';
@@ -40,6 +41,7 @@ import MemberCourseDetail from '../pages/member/MemberCourseDetail';
 import LessonViewer from '../pages/member/LessonViewer';
 import MemberAssignments from '../pages/member/MemberAssignments';
 import MemberAssignmentDetail from '../pages/member/MemberAssignmentDetail';
+import MemberAssessmentsHub from '../pages/member/MemberAssessmentsHub';
 import MemberProgress from '../pages/member/MemberProgress';
 import MemberGrowth from '../pages/member/MemberGrowth';
 import MemberSkills from '../pages/member/MemberSkills';
@@ -61,17 +63,21 @@ const AppRoutes = () => {
         <Layout title='MITRA LMS' description='Learning & Growth Management Platform'>
           <Routes>
             <Route path='/' element={<Navigate to={isAdmin ? '/admin' : isLeader ? '/leader' : '/member'} replace />} />
-            
+
             <Route path='/unauthorized' element={<Unauthorized />} />
 
-            {/* Admin Routes - Strictly Protected */}
+            {/* Admin Routes */}
             <Route path='/admin/*' element={
               <RouteGuard allowedRoles={['Admin']}>
                 <Routes>
                   <Route path='' element={<AdminDashboard />} />
                   <Route path='courses' element={<AdminCourses />} />
                   <Route path='courses/:courseId' element={<AdminCourseDetail />} />
-                  <Route path='assignments' element={<AdminAssignments />} />
+                  {/* Merged Assessments Hub — primary route */}
+                  <Route path='assessments' element={<AdminAssessmentsHub />} />
+                  {/* Legacy redirects */}
+                  <Route path='assignments' element={<Navigate to='/admin/assessments' replace />} />
+                  <Route path='quizzes' element={<Navigate to='/admin/assessments' replace />} />
                   <Route path='submissions' element={<AdminSubmissions />} />
                   <Route path='members' element={<AdminMembersList />} />
                   <Route path='teams' element={<AdminTeamsList />} />
@@ -79,7 +85,6 @@ const AppRoutes = () => {
                   <Route path='progress' element={<AdminProgress />} />
                   <Route path='growth' element={<AdminGrowth />} />
                   <Route path='skills' element={<AdminSkills />} />
-                  <Route path='quizzes' element={<AdminQuizzes />} />
                   <Route path='notifications' element={<AdminNotifications />} />
                   <Route path='audit-logs' element={<AdminAuditLogs />} />
                   <Route path='rubrics' element={<AdminRubrics />} />
@@ -87,7 +92,7 @@ const AppRoutes = () => {
               </RouteGuard>
             } />
 
-            {/* Leader Routes - Strictly Protected */}
+            {/* Leader Routes */}
             <Route path='/leader/*' element={
               <RouteGuard allowedRoles={['Admin', 'Team Leader']}>
                 <Routes>
@@ -102,7 +107,7 @@ const AppRoutes = () => {
               </RouteGuard>
             } />
 
-            {/* Member Routes - Accessible by all roles for learning/viewing */}
+            {/* Member Routes — accessible by all roles */}
             <Route path='/member/*' element={
               <RouteGuard allowedRoles={['Admin', 'Team Leader', 'Member']}>
                 <Routes>
@@ -110,9 +115,12 @@ const AppRoutes = () => {
                   <Route path='learning' element={<MemberLearning />} />
                   <Route path='learning/:courseId' element={<MemberCourseDetail />} />
                   <Route path='learning/:courseId/lesson/:lessonId' element={<LessonViewer />} />
-                  <Route path='assignments' element={<MemberAssignments />} />
+                  {/* Merged Assessments Hub */}
+                  <Route path='assessments' element={<MemberAssessmentsHub />} />
+                  {/* Individual assignment/quiz detail still works */}
+                  <Route path='assignments' element={<Navigate to='/member/assessments' replace />} />
                   <Route path='assignments/:assignmentId' element={<MemberAssignmentDetail />} />
-                  <Route path='quizzes' element={<MemberQuizzes />} />
+                  <Route path='quizzes' element={<Navigate to='/member/assessments' replace />} />
                   <Route path='quizzes/:quizId' element={<MemberQuizViewer />} />
                   <Route path='tasks' element={<MemberTasks />} />
                   <Route path='projects' element={<MemberProjectSubmit />} />

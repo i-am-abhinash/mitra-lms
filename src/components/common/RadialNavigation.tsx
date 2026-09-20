@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
   Home, Users, Settings, ShieldAlert, LogOut,
-  BookOpen, FileText, CheckCircle, TrendingUp, Activity, Award, Bell, List, HelpCircle, ListTodo
+  BookOpen, FileText, CheckCircle, TrendingUp, Activity, Award, Bell, List
 } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -48,33 +48,30 @@ const RadialNavigation = () => {
     navItems = [
       { to: '/admin', icon: Home, label: 'Dashboard' },
       { to: '/admin/courses', icon: BookOpen, label: 'Courses' },
-      { to: '/admin/assignments', icon: FileText, label: 'Assignments' },
-      { to: '/admin/quizzes', icon: HelpCircle, label: 'Quizzes' },
+      { to: '/admin/assessments', icon: FileText, label: 'Assessments' },
       { to: '/admin/submissions', icon: CheckCircle, label: 'Submissions' },
-      { to: '/admin/rubrics', icon: CheckCircle, label: 'Rubrics' },
+      { to: '/admin/rubrics', icon: Award, label: 'Rubrics' },
       { to: '/admin/growth', icon: TrendingUp, label: 'Growth' },
       { to: '/admin/members', icon: Users, label: 'Members' },
       { to: '/admin/teams', icon: Users, label: 'Teams' },
-        { to: '/admin/audit-logs', icon: ShieldAlert, label: 'Audit Logs' }
+      { to: '/admin/audit-logs', icon: ShieldAlert, label: 'Audit Logs' }
     ];
   } else if (isLeader) {
     navItems = [
       { to: '/leader', icon: Home, label: 'Dashboard' },
       { to: '/leader/team', icon: Users, label: 'My Team' },
-      { to: '/leader/tasks', icon: ListTodo, label: 'Tasks' },
+      { to: '/member/learning', icon: BookOpen, label: 'Learning' },
+      { to: '/member/assessments', icon: FileText, label: 'Assessments' },
       { to: '/leader/evaluations', icon: CheckCircle, label: 'Evaluations' },
       { to: '/leader/progress', icon: Activity, label: 'Progress' },
       { to: '/leader/growth', icon: TrendingUp, label: 'Growth' },
-      { to: '#notifications', icon: Bell, label: 'Alerts' }
     ];
   } else if (isMember) {
     navItems = [
       { to: '/member', icon: Home, label: 'Dashboard' },
       { to: '/member/learning', icon: BookOpen, label: 'Learning' },
-      { to: '/member/assignments', icon: FileText, label: 'Assignments' },
-      { to: '/member/quizzes', icon: HelpCircle, label: 'Quizzes' },
-      { to: '/member/tasks', icon: ListTodo, label: 'Tasks' },
-      { to: '/member/projects', icon: FileText, label: 'Projects' },
+      { to: '/member/assessments', icon: FileText, label: 'Assessments' },
+      { to: '/member/projects', icon: List, label: 'Projects' },
       { to: '/member/progress', icon: Activity, label: 'Progress' },
       { to: '/member/growth', icon: TrendingUp, label: 'Growth' },
       { to: '/member/skills', icon: Award, label: 'Skills' }

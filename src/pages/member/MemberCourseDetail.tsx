@@ -77,8 +77,8 @@ const MemberCourseDetail = () => {
           <div className='bg-theme-accent h-2 transition-all duration-500' style={{ width: `${completionPercent}%` }}></div>
         </div>
         {nextLessonId && (
-          <button 
-            onClick={() => navigate(`/member/learning/lesson/${nextLessonId}`)} 
+          <button
+            onClick={() => navigate(`/member/learning/${courseId}/lesson/${nextLessonId}`)}
             className='mt-6 px-6 py-2 bg-theme-accent hover:bg-theme-accent-hover text-white rounded-lg transition-colors font-medium'
           >
             {completedLessonIds.size === 0 ? 'Start Learning' : completionPercent === 100 ? 'Review Course' : 'Continue Learning'}
@@ -102,9 +102,9 @@ const MemberCourseDetail = () => {
                   const isCurrent = lesson.id === nextLessonId;
                   
                   return (
-                    <div 
-                      key={lesson.id} 
-                      onClick={() => navigate(`/member/learning/lesson/${lesson.id}`)}
+                    <div
+                      key={lesson.id}
+                      onClick={() => navigate(`/member/learning/${courseId}/lesson/${lesson.id}`)}
                       className={clsx(
                         'p-4 flex items-center justify-between cursor-pointer transition-colors',
                         isCurrent ? 'bg-theme-accent-light hover:bg-theme-surface-higher' : 'hover:bg-theme-surface-higher'
